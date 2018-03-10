@@ -1,0 +1,22 @@
+{
+  "name": "oneledgercontract",
+  "version": "0.1.0",
+  "description": "Oneledger Contract",
+  "main": "truffle-config.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oneledger/OLT.git"
+  },
+  "author": "stephen",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/oneledger/OLT/issues"
+  },
+  "homepage": "https://github.com/oneledger/OLT#readme",
+  "dependencies": {
+    "zeppelin-solidity": "^1.7.0"
+  }
+}
