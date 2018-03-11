@@ -6,9 +6,11 @@ contract OneledgerToken is StandardToken {
   string public symbol = "OLT";
   uint public decimals = 18;
   uint256 public INITIAL_SUPPLY = 100000000 * (10 ** decimals);
+  address public owner;
 
   function OneledgerToken() public {
       totalSupply_ = INITIAL_SUPPLY;
       balances[msg.sender] = INITIAL_SUPPLY;
+      owner = msg.sender;
   }
 }
