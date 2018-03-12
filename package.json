@@ -18,6 +18,9 @@
   "homepage": "https://github.com/oneledger/OLT#readme",
   "dependencies": {
     "@digix/tempo": "git+https://github.com/DigixGlobal/tempo.git",
+    "chai": "^4.1.2",
+    "chai-as-promised": "^7.1.1",
+    "chai-bignumber": "^2.0.2",
     "zeppelin-solidity": "^1.7.0"
   }
 }

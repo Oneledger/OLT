@@ -1,4 +1,9 @@
-var OneledgerToken = artifacts.require('./OneledgerToken.sol')
+var OneledgerToken = artifacts.require('./OneledgerToken.sol');
+const BigNumber = web3.BigNumber;
+require('chai')
+  .use(require('chai-as-promised'))
+  .use(require('chai-bignumber')(BigNumber))
+  .should();
 
 contract('OneledgerToken', function([owner,investor1, investor2, spender]){
   let token = null
@@ -25,6 +30,10 @@ contract('OneledgerToken', function([owner,investor1, investor2, spender]){
     await token.transferFrom(investor1, investor2, 100, {from: spender});
     assert.equal(await token.balanceOf(investor1), 900);
     assert.equal(await token.balanceOf(investor2), 100);
+  });
+  it('should failed transferFrom the token from one user to another user with no approve', async ()=>{
+    await token.transfer(investor1, 1000);
+    await token.transferFrom(investor1, investor2, 100, {from: spender}).should.be.rejectedWith('revert');
   });
 
 })
