@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/oneledger/OLT#readme",
   "dependencies": {
+    "@digix/tempo": "git+https://github.com/DigixGlobal/tempo.git",
     "zeppelin-solidity": "^1.7.0"
   }
 }
