@@ -10,7 +10,7 @@ Distribution method:
 - Company reserve: locked for 18 months with monthly release starting from the seventh month
 - Others?
 
-## Technical Requirement
+## Requirement
 
 Token contract:
   - The standard ERC 20 Token
@@ -24,3 +24,8 @@ Pre-sales contract:
 Before ICO contract:
   - We deploy this contract the day before ICO
   - Buyer can send ETH to the contract and contract will send the one-day time locked token to the buyer
+
+## Technical requirement
+
+- add a active flag to active the token after it is listed
+- add a time locker for certain addresses(by default there is no locker, this is for company, early investor or development team). The locker will define a schedule to unlock the token that they can transfer or transferFrom
