@@ -5,7 +5,7 @@ require('chai')
   .use(require('chai-bignumber')(BigNumber))
   .should();
 
-contract('OneledgerTokenWithGeneralLocker', ([owner,spender,user1,user2])=>{
+contract('OneledgerTokenWithActive', ([owner,spender,user1,user2])=>{
   let token = null
   beforeEach(async ()=>{
     token = await OneledgerToken.new()
