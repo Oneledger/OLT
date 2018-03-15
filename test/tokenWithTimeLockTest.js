@@ -25,8 +25,24 @@ contract('OneledgerTokenWithTimeLock', ([owner,spender,user1,user2,user3])=>{
     await increaseTime(duration.weeks(1) + duration.days(1));
     await token.transfer(user2, 400 , {from: user1}).should.be.fulfilled;
     await token.transfer(user2, 300 , {from: user1}).should.be.fulfilled;
-    await token.transfer(user2, 300 , {from: user1}).should.be.fulfilled;
+    await token.transferFrom(user1, user2, 300 , {from: spender}).should.be.fulfilled;
   });
+  it('should be able to release the token based on schedule', async () => {
+    await token.addLocker(user1, duration.weeks(4), 300); //after 4 weeks, release 300 token
+    await token.addLocker(user1, duration.weeks(8), 300); //after 8 weeks, release 300 token
+    await token.addLocker(user1, duration.weeks(12), 400); //after 12 weeks, release 400 token
+    // after that all tokens are released
 
+    await token.transfer(user2, 100,{from: user1}).should.be.rejectedWith('revert');
+
+    await increaseTime(duration.weeks(4) + duration.days(1));
+    await token.transfer(user2, 300,{from: user1}).should.be.fulfilled;
+    await token.transfer(user2, 100,{from: user1}).should.be.rejectedWith('revert');
+    await increaseTime(duration.weeks(4) + duration.days(1));
+    await token.transfer(user2, 300,{from: user1}).should.be.fulfilled;
+    await token.transfer(user2, 100,{from: user1}).should.be.rejectedWith('revert');
+    await increaseTime(duration.weeks(4) + duration.days(1));
+    await token.transfer(user2, 400,{from: user1}).should.be.fulfilled;
+  })
 
 })
