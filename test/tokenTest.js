@@ -36,5 +36,10 @@ contract('OneledgerToken', function([owner,investor1, investor2, spender]){
     await token.transfer(investor1, 1000);
     await token.transferFrom(investor1, investor2, 100, {from: spender}).should.be.rejectedWith('revert');
   });
+  it('should be able to transfer multiple times', async ()=>{
+    await token.transfer(investor1, 1000);
+    await token.transfer(investor2, 500, {from: investor1}).should.be.fulfilled;
+    await token.transfer(investor2, 400, {from: investor1}).should.be.fulfilled;
+  });
 
 })
