@@ -1,0 +1,375 @@
+{
+  "contractName": "ReleasePlanStruct",
+  "abi": [],
+  "bytecode": "0x60606040523415600e57600080fd5b603580601b6000396000f3006060604052600080fd00a165627a7a72305820aaf04c690d9a5e58f62f18edd78c4478be9e2afd8b88a6dd1ee307deb27b37c80029",
+  "deployedBytecode": "0x6060604052600080fd00a165627a7a72305820aaf04c690d9a5e58f62f18edd78c4478be9e2afd8b88a6dd1ee307deb27b37c80029",
+  "sourceMap": "26:220:1:-;;;;;;;;;;;;;;;;;",
+  "deployedSourceMap": "26:220:1:-;;;;;",
+  "source": "pragma solidity ^0.4.11;\n\nlibrary ReleasePlanStruct {\n  struct TimeLocker {\n    uint256 releaseTime;\n    uint256 freezedTokens; //the token freezed before release time\n  }\n  struct ReleasePlan {\n    uint8 flag;\n    TimeLocker[] timeLockers;\n  }\n}\n",
+  "sourcePath": "/Users/yangli/dev/OLT/contracts/ReleasePlanStruct.sol",
+  "ast": {
+    "absolutePath": "/Users/yangli/dev/OLT/contracts/ReleasePlanStruct.sol",
+    "exportedSymbols": {
+      "ReleasePlanStruct": [
+        283
+      ]
+    },
+    "id": 284,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 271,
+        "literals": [
+          "solidity",
+          "^",
+          "0.4",
+          ".11"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:24:1"
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "library",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 283,
+        "linearizedBaseContracts": [
+          283
+        ],
+        "name": "ReleasePlanStruct",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "canonicalName": "ReleasePlanStruct.TimeLocker",
+            "id": 276,
+            "members": [
+              {
+                "constant": false,
+                "id": 273,
+                "name": "releaseTime",
+                "nodeType": "VariableDeclaration",
+                "scope": 276,
+                "src": "80:19:1",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 272,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "80:7:1",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 275,
+                "name": "freezedTokens",
+                "nodeType": "VariableDeclaration",
+                "scope": 276,
+                "src": "105:21:1",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 274,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "105:7:1",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              }
+            ],
+            "name": "TimeLocker",
+            "nodeType": "StructDefinition",
+            "scope": 283,
+            "src": "56:115:1",
+            "visibility": "public"
+          },
+          {
+            "canonicalName": "ReleasePlanStruct.ReleasePlan",
+            "id": 282,
+            "members": [
+              {
+                "constant": false,
+                "id": 278,
+                "name": "flag",
+                "nodeType": "VariableDeclaration",
+                "scope": 282,
+                "src": "199:10:1",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint8",
+                  "typeString": "uint8"
+                },
+                "typeName": {
+                  "id": 277,
+                  "name": "uint8",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "199:5:1",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint8",
+                    "typeString": "uint8"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 281,
+                "name": "timeLockers",
+                "nodeType": "VariableDeclaration",
+                "scope": 282,
+                "src": "215:24:1",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_array$_t_struct$_TimeLocker_$276_storage_$dyn_storage_ptr",
+                  "typeString": "struct ReleasePlanStruct.TimeLocker storage ref[] storage pointer"
+                },
+                "typeName": {
+                  "baseType": {
+                    "contractScope": null,
+                    "id": 279,
+                    "name": "TimeLocker",
+                    "nodeType": "UserDefinedTypeName",
+                    "referencedDeclaration": 276,
+                    "src": "215:10:1",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_TimeLocker_$276_storage_ptr",
+                      "typeString": "struct ReleasePlanStruct.TimeLocker storage pointer"
+                    }
+                  },
+                  "id": 280,
+                  "length": null,
+                  "nodeType": "ArrayTypeName",
+                  "src": "215:12:1",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_struct$_TimeLocker_$276_storage_$dyn_storage_ptr",
+                    "typeString": "struct ReleasePlanStruct.TimeLocker storage ref[] storage pointer"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              }
+            ],
+            "name": "ReleasePlan",
+            "nodeType": "StructDefinition",
+            "scope": 283,
+            "src": "174:70:1",
+            "visibility": "public"
+          }
+        ],
+        "scope": 284,
+        "src": "26:220:1"
+      }
+    ],
+    "src": "0:247:1"
+  },
+  "legacyAST": {
+    "absolutePath": "/Users/yangli/dev/OLT/contracts/ReleasePlanStruct.sol",
+    "exportedSymbols": {
+      "ReleasePlanStruct": [
+        283
+      ]
+    },
+    "id": 284,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 271,
+        "literals": [
+          "solidity",
+          "^",
+          "0.4",
+          ".11"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:24:1"
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "library",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 283,
+        "linearizedBaseContracts": [
+          283
+        ],
+        "name": "ReleasePlanStruct",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "canonicalName": "ReleasePlanStruct.TimeLocker",
+            "id": 276,
+            "members": [
+              {
+                "constant": false,
+                "id": 273,
+                "name": "releaseTime",
+                "nodeType": "VariableDeclaration",
+                "scope": 276,
+                "src": "80:19:1",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 272,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "80:7:1",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 275,
+                "name": "freezedTokens",
+                "nodeType": "VariableDeclaration",
+                "scope": 276,
+                "src": "105:21:1",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 274,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "105:7:1",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              }
+            ],
+            "name": "TimeLocker",
+            "nodeType": "StructDefinition",
+            "scope": 283,
+            "src": "56:115:1",
+            "visibility": "public"
+          },
+          {
+            "canonicalName": "ReleasePlanStruct.ReleasePlan",
+            "id": 282,
+            "members": [
+              {
+                "constant": false,
+                "id": 278,
+                "name": "flag",
+                "nodeType": "VariableDeclaration",
+                "scope": 282,
+                "src": "199:10:1",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint8",
+                  "typeString": "uint8"
+                },
+                "typeName": {
+                  "id": 277,
+                  "name": "uint8",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "199:5:1",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint8",
+                    "typeString": "uint8"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 281,
+                "name": "timeLockers",
+                "nodeType": "VariableDeclaration",
+                "scope": 282,
+                "src": "215:24:1",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_array$_t_struct$_TimeLocker_$276_storage_$dyn_storage_ptr",
+                  "typeString": "struct ReleasePlanStruct.TimeLocker storage ref[] storage pointer"
+                },
+                "typeName": {
+                  "baseType": {
+                    "contractScope": null,
+                    "id": 279,
+                    "name": "TimeLocker",
+                    "nodeType": "UserDefinedTypeName",
+                    "referencedDeclaration": 276,
+                    "src": "215:10:1",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_TimeLocker_$276_storage_ptr",
+                      "typeString": "struct ReleasePlanStruct.TimeLocker storage pointer"
+                    }
+                  },
+                  "id": 280,
+                  "length": null,
+                  "nodeType": "ArrayTypeName",
+                  "src": "215:12:1",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_struct$_TimeLocker_$276_storage_$dyn_storage_ptr",
+                    "typeString": "struct ReleasePlanStruct.TimeLocker storage ref[] storage pointer"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              }
+            ],
+            "name": "ReleasePlan",
+            "nodeType": "StructDefinition",
+            "scope": 283,
+            "src": "174:70:1",
+            "visibility": "public"
+          }
+        ],
+        "scope": 284,
+        "src": "26:220:1"
+      }
+    ],
+    "src": "0:247:1"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.4.19+commit.c4cbbb05.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "2.0.0",
+  "updatedAt": "2018-03-17T17:12:33.095Z"
+}
