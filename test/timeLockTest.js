@@ -14,14 +14,16 @@ contract('TimeLock', function([owner,user1, user2, spender]){
   beforeEach(async ()=>{
     token = await OneledgerToken.new();
     timeLock = await TimeLock.new(token.address);
+    token.setTimelockKeeper(timeLock.address);
+    token.transfer(timeLock.address, 10000);
     await token.active();
   });
   it('has an owner',async ()=>{
     assert.equal(await token.owner(), owner);
   });
   it('should be able to schedule a time locker', async ()=>{
-    await timeLock.setSchedule(user1, 1000, duration.weeks(8), duration.weeks(4), 300);
-    await token.transfer(user1, 1000);
+    await timeLock.deposit(user1, 1000, duration.weeks(8), duration.weeks(4), 300);
+
     await token.transfer(user2, 100,{from: user1}).should.be.rejectedWith('revert');
 
     await increaseTime(duration.weeks(8) + duration.days(1));

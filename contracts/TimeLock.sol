@@ -10,6 +10,12 @@ contract TimeLock {
   OneledgerToken token;
   address owner;
 
+  event AddTimeLock(address user,
+    uint256 depositToken,
+    uint256 startingFrom,
+    uint256 period,
+    uint256 releaseTokenPerPeriod);
+
 
   /**
     * @dev constructor
@@ -25,7 +31,12 @@ contract TimeLock {
   * param user_ address the user to depsit money to
   * param depositToken_ int the amount of token desposit to
   */
-  function setSchedule(address user_, uint256 depositToken_, uint256 startingFrom_, uint256 period_, uint256 releaseTokenPerPeriod_) public returns (bool){
+  function deposit(address user_,
+    uint256 depositToken_,
+    uint256 startingFrom_,
+    uint256 period_,
+    uint256 releaseTokenPerPeriod_
+    ) public returns (bool){
     require(msg.sender == owner);
     require(depositToken_ > 0);
     require(releaseTokenPerPeriod_ > 0);
@@ -39,6 +50,8 @@ contract TimeLock {
       duration += period_;
     }
     token.addLocker(user_, duration, unReleasedToken);
+    AddTimeLock(user_, depositToken_, startingFrom_, period_, releaseTokenPerPeriod_);
+    token.transfer(user_, depositToken_);
     return true;
   }
 }
