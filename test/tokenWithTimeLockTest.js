@@ -14,6 +14,7 @@ contract('OneledgerTokenWithTimeLock', ([owner,spender,user1,user2,user3])=>{
     await token.active(); //first to active the token
     await token.transfer(user1, 1000,{from: owner});
     await token.approve(spender,1000, {from: user1});
+    await token.setTimelockKeeper(owner);
   });
   it('should lock the token if I add the user to the time lock list', async () => {
     await token.addLocker(user1, 1024, 1000);

@@ -10,7 +10,7 @@ contract TimeLock {
   OneledgerToken token;
   address owner;
 
-  event AddTimeLock(address user,
+  event DepositWithTimeLock(address user,
     uint256 depositToken,
     uint256 startingFrom,
     uint256 period,
@@ -50,8 +50,8 @@ contract TimeLock {
       duration += period_;
     }
     token.addLocker(user_, duration, unReleasedToken);
-    AddTimeLock(user_, depositToken_, startingFrom_, period_, releaseTokenPerPeriod_);
     token.transfer(user_, depositToken_);
+    DepositWithTimeLock(user_, depositToken_, startingFrom_, period_, releaseTokenPerPeriod_);
     return true;
   }
 }
