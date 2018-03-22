@@ -17,6 +17,9 @@ contract ICO {
 
   event PurchaseToken(uint256 weiAmount, uint256 rate, uint256 token, address beneficiary);
 
+  /**
+  * @dev constructor
+  */
   function ICO(address _wallet, ERC20 _token, uint256 _rate) public {
     require(_rate > 0);
     require(_wallet != address(0));
@@ -26,6 +29,7 @@ contract ICO {
     token = _token;
     rate = _rate;
   }
+
   /**
    * @dev fallback function ***DO NOT OVERRIDE***
    */
@@ -33,6 +37,9 @@ contract ICO {
     buyTokens(msg.sender);
   }
 
+  /**
+   * @dev buy tokens
+   */
   function buyTokens(address _beneficiary) public payable returns (bool){
     uint256 weiAmount = msg.value;
     require(_beneficiary != 0);
