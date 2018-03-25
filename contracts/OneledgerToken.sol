@@ -96,11 +96,19 @@ contract OneledgerToken is StandardToken {
   }
 
   /**
-  * @dev active to active the token, once it is activated, it cannot be reverted
+  * @dev active to active the token
   */
   function active()  public onlyOwner{
     active_ = true;
   }
+
+  /**
+  * @dev  pause the distribution of the token
+  */
+  function disActive()  public onlyOwner{
+    active_ = false;
+  }
+
   /**
   * @dev isActived query if this token contract is activated
   */
