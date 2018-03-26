@@ -8,8 +8,11 @@ contract ICO {
   using SafeMath for uint256;
 
   struct Registration {
+    uint8 tierIndex;
     bool isInWhiteList;
-    uint256 offeredToken;
+    uint256 offeredWei;
+    uint256 usedWei;
+    uint256 lastUsed;
   }
 
   ERC20 public token;
@@ -60,6 +63,8 @@ contract ICO {
     closed = false;
 
     owner = msg.sender;
+
+    tiers[0][address(0)] =  Registration(0,false, 0, 0, now);
   }
 
   /**
@@ -73,7 +78,10 @@ contract ICO {
     require(tierIndex>=0 && tierIndex < 4);
     for (uint32 i = 0 ; i < toList.length; i ++){
       tiers[tierIndex][toList[i]].isInWhiteList = true;
-      tiers[tierIndex][toList[i]].offeredToken = weiPerContributor; //overriding even if the address exists
+      tiers[tierIndex][toList[i]].offeredWei = weiPerContributor; //overriding even if the address exists
+      tiers[tierIndex][toList[i]].usedWei = 0;
+      tiers[tierIndex][toList[i]].tierIndex = tierIndex;
+      tiers[tierIndex][toList[i]].lastUsed = now;
     }
   }
 
@@ -100,54 +108,69 @@ contract ICO {
    */
   function buyTokens() public payable isNotClosed returns (bool){
     uint256 timePassed = now - initialTime;
-    var (isInWhiteList, offeredToken) = findUserFromWhiteList(msg.sender);
-    require(isInWhiteList == true);
+    var registration = findUserFromWhiteList(msg.sender);
+    require(registration.isInWhiteList == true);
 
     if (timePassed > 48 hours) {
       // Free for all
       return freeForAll();
     }else if (timePassed > 24 hours ){
       //Double offering stratege
-      return buyWithLimit(offeredToken.mul(2));
+      return buyWithLimit(registration.offeredWei.mul(2), resetUsedWei(registration));
     }else{
       //Buy token per limit
-      return buyWithLimit(offeredToken);
+      return buyWithLimit(registration.offeredWei, registration);
     }
 
+  }
+
+  function resetUsedWei(Registration registration) internal returns (Registration) {
+    if(registration.lastUsed - initialTime <= 24 hours) {
+      tiers[registration.tierIndex][msg.sender].usedWei = 0;
+      return tiers[registration.tierIndex][msg.sender];
+    }else{
+      return registration;
+    }
   }
 
   function freeForAll() internal returns (bool){
     uint256 weiAmount = msg.value;
     require(weiAmount != 0);
     uint256 tokenToBuy = weiAmount.mul(rate);
-    return doPurchase(tokenToBuy, weiAmount);
+    if(doPurchase(tokenToBuy)){
+      PurchaseToken(weiAmount, rate, tokenToBuy, msg.sender);
+      return true;
+    }
   }
 
-  function buyWithLimit(uint256 limitation) internal returns(bool){
+  function buyWithLimit(uint256 limitation, Registration registration) internal returns(bool){
     uint256 weiAmount = msg.value;
-    require(weiAmount != 0);
+    require(weiAmount != 0 && weiAmount <= (limitation - registration.usedWei));
     uint256 tokenToBuy = weiAmount.mul(rate);
-    require(tokenToBuy <= limitation);
-    return doPurchase(tokenToBuy, weiAmount);
+    if(doPurchase(tokenToBuy)){
+      tiers[registration.tierIndex][msg.sender].usedWei += weiAmount;
+      tiers[registration.tierIndex][msg.sender].lastUsed = now;
+      PurchaseToken(weiAmount, rate, tokenToBuy, msg.sender);
+      return true;
+    }
   }
 
-  function doPurchase(uint256 tokenToBuy, uint256 weiAmount) internal  returns (bool){
+  function doPurchase(uint256 tokenToBuy) internal  returns (bool){
     address _beneficiary = msg.sender;
     require(_beneficiary != 0);
     token.transfer(_beneficiary, tokenToBuy);
     wallet.transfer(msg.value);
-    PurchaseToken(weiAmount, rate, tokenToBuy, _beneficiary);
     return true;
   }
 
-  function findUserFromWhiteList(address user) internal returns (bool isInWhiteList, uint256 offeredToken){
+  function findUserFromWhiteList(address user) internal view returns (Registration){
     for(uint8 i = 0; i < 4; i++){
       Registration storage registration = tiers[i][user];
       if(registration.isInWhiteList == true) {
-        return (true, registration.offeredToken);
+        return registration;
       }
     }
 
-    return (false, 0);
+    return tiers[0][address(0)];
   }
 }
