@@ -1,4 +1,4 @@
-pragma solidity ^0.4.11;
+pragma solidity 0.4.21;
 
 import "./OneledgerToken.sol";
 import "zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
