@@ -44,7 +44,7 @@ contract TimeLock {
 
     uint256 unReleasedToken = depositToken_;
     uint256 duration = startingFrom_;
-    while(unReleasedToken > releaseTokenPerPeriod_){
+    while (unReleasedToken > releaseTokenPerPeriod_) {
       token.addLocker(user_, duration, releaseTokenPerPeriod_); //after 4 weeks, release 300 token
       unReleasedToken -= releaseTokenPerPeriod_;
       duration += period_;

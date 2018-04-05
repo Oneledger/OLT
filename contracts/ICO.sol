@@ -74,7 +74,7 @@ contract ICO {
   * param weiPerContributor the wei can be transfer per contributor
   * param capWeiPerTier
   */
-  function whiteList(uint8 tierIndex, address[] toList, uint256 weiPerContributor) public onlyOwner{
+  function whiteList(uint8 tierIndex, address[] toList, uint256 weiPerContributor) public onlyOwner {
     require(tierIndex>=0 && tierIndex < 4);
     for (uint32 i = 0 ; i < toList.length; i ++){
       tiers[tierIndex][toList[i]].isInWhiteList = true;
@@ -88,11 +88,11 @@ contract ICO {
   /**
   * @dev close the ICO
   */
-  function icoClosed() public onlyOwner{
+  function icoClosed() public onlyOwner {
     closed = true;
   }
 
-  function updateRate(uint256 rate_) public onlyOwner{
+  function updateRate(uint256 rate_) public onlyOwner {
     rate = rate_;
   }
 
@@ -106,7 +106,7 @@ contract ICO {
   /**
    * @dev buy tokens
    */
-  function buyTokens() public payable isNotClosed returns (bool){
+  function buyTokens() public payable isNotClosed returns (bool) {
     uint256 timePassed = now - initialTime;
     var registration = findUserFromWhiteList(msg.sender);
     require(registration.isInWhiteList == true);
@@ -114,10 +114,10 @@ contract ICO {
     if (timePassed > 48 hours) {
       // Free for all
       return freeForAll();
-    }else if (timePassed > 24 hours ){
+    } else if (timePassed > 24 hours ) {
       //Double offering stratege
       return buyWithLimit(registration.offeredWei.mul(2), resetUsedWei(registration));
-    }else{
+    } else {
       //Buy token per limit
       return buyWithLimit(registration.offeredWei, registration);
     }
@@ -128,22 +128,22 @@ contract ICO {
     if(registration.lastUsed - initialTime <= 24 hours) {
       tiers[registration.tierIndex][msg.sender].usedWei = 0;
       return tiers[registration.tierIndex][msg.sender];
-    }else{
+    } else {
       return registration;
     }
   }
 
-  function freeForAll() internal returns (bool){
+  function freeForAll() internal returns (bool) {
     uint256 weiAmount = msg.value;
     require(weiAmount != 0);
     uint256 tokenToBuy = weiAmount.mul(rate);
-    if(doPurchase(tokenToBuy)){
+    if (doPurchase(tokenToBuy)) {
       PurchaseToken(weiAmount, rate, tokenToBuy, msg.sender);
       return true;
     }
   }
 
-  function buyWithLimit(uint256 limitation, Registration registration) internal returns(bool){
+  function buyWithLimit(uint256 limitation, Registration registration) internal returns(bool) {
     uint256 weiAmount = msg.value;
     require(weiAmount != 0 && weiAmount <= (limitation - registration.usedWei));
     uint256 tokenToBuy = weiAmount.mul(rate);
@@ -155,7 +155,7 @@ contract ICO {
     }
   }
 
-  function doPurchase(uint256 tokenToBuy) internal  returns (bool){
+  function doPurchase(uint256 tokenToBuy) internal  returns (bool) {
     address _beneficiary = msg.sender;
     require(_beneficiary != 0);
     token.transfer(_beneficiary, tokenToBuy);
@@ -163,8 +163,8 @@ contract ICO {
     return true;
   }
 
-  function findUserFromWhiteList(address user) internal view returns (Registration){
-    for(uint8 i = 0; i < 4; i++){
+  function findUserFromWhiteList(address user) internal view returns (Registration) {
+    for(uint8 i = 0; i < 4; i++) {
       Registration storage registration = tiers[i][user];
       if(registration.isInWhiteList == true) {
         return registration;

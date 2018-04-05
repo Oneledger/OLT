@@ -87,7 +87,7 @@ contract OneledgerToken is StandardToken {
   * @param duration uint256
   * @param freezedToken uint256
   */
-  function addLocker(address from, uint256 duration, uint256 freezedToken) public onlyTimelockKeeper{
+  function addLocker(address from, uint256 duration, uint256 freezedToken) public onlyTimelockKeeper {
     ReleasePlanStruct.ReleasePlan storage releasePlan_ = releasePlan[from];
     if(releasePlan_.flag != 1){
       releasePlan_.flag = 1;
@@ -98,14 +98,14 @@ contract OneledgerToken is StandardToken {
   /**
   * @dev active to active the token
   */
-  function active()  public onlyOwner{
+  function active() public onlyOwner {
     active_ = true;
   }
 
   /**
   * @dev  pause the distribution of the token
   */
-  function disActive()  public onlyOwner{
+  function disActive() public onlyOwner {
     active_ = false;
   }
 
@@ -118,14 +118,14 @@ contract OneledgerToken is StandardToken {
   /**
   * @dev transfer  ERC20 standard transfer wrapped with onlyActivedOrOwner, allowedByTimeLocker
   */
-  function transfer(address to, uint256 value) public onlyActivedOrOwner allowedByTimeLocker(msg.sender,value) returns (bool){
+  function transfer(address to, uint256 value) public onlyActivedOrOwner allowedByTimeLocker(msg.sender,value) returns (bool) {
     return super.transfer(to, value);
   }
 
   /**
   * @dev transfer  ERC20 standard transferFrom wrapped with onlyActivedOrOwner, allowedByTimeLocker
   */
-  function transferFrom(address from, address to, uint256 value) public onlyActivedOrOwner allowedByTimeLocker(from, value) returns (bool){
+  function transferFrom(address from, address to, uint256 value) public onlyActivedOrOwner allowedByTimeLocker(from, value) returns (bool) {
     return super.transferFrom(from, to, value);
   }
 }
