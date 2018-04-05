@@ -4,7 +4,7 @@
   "description": "Oneledger Contract",
   "main": "truffle-config.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "compile": "truffle compile"
   },
   "repository": {
     "type": "git",
@@ -21,6 +21,7 @@
     "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",
     "chai-bignumber": "^2.0.2",
-    "zeppelin-solidity": "^1.7.0"
+    "zeppelin-solidity": "^1.7.0",
+    "truffle": "4.1.5"
   }
 }
