@@ -4,7 +4,8 @@
   "description": "Oneledger Contract",
   "main": "truffle-config.js",
   "scripts": {
-    "compile": "truffle compile"
+    "compile": "truffle compile",
+    "test": "truffle test --network development"
   },
   "repository": {
     "type": "git",
