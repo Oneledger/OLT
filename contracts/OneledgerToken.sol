@@ -26,15 +26,15 @@ contract OneledgerToken is StandardToken {
   modifier allowedByTimeLocker(address from, uint256 value)  {
     ReleasePlanStruct.ReleasePlan storage rPlan = releasePlan[from];
     if(rPlan.flag == 1){
-      uint256 freezedTokens = 0;
+      uint256 frozenTokens = 0;
       ReleasePlanStruct.TimeLocker[] storage timeLockers = rPlan.timeLockers;
       for (uint i =0; i < timeLockers.length; i++){
         ReleasePlanStruct.TimeLocker storage locker = timeLockers[i];
         if(locker.releaseTime >= now){
-          freezedTokens += locker.freezedTokens;
+          frozenTokens += locker.frozenTokens;
         }
       }
-      require( balances[from] >= value + freezedTokens);
+      require( balances[from] >= value + frozenTokens);
     }
     _;
   }
@@ -85,14 +85,14 @@ contract OneledgerToken is StandardToken {
   * @dev addLocker add the time lock for the user
   * @param from address
   * @param duration uint256
-  * @param freezedToken uint256
+  * @param frozenToken uint256
   */
-  function addLocker(address from, uint256 duration, uint256 freezedToken) public onlyTimelockKeeper {
+  function addLocker(address from, uint256 duration, uint256 frozenToken) public onlyTimelockKeeper {
     ReleasePlanStruct.ReleasePlan storage releasePlan_ = releasePlan[from];
     if(releasePlan_.flag != 1){
       releasePlan_.flag = 1;
     }
-    releasePlan_.timeLockers.push(ReleasePlanStruct.TimeLocker(now + duration, freezedToken));
+    releasePlan_.timeLockers.push(ReleasePlanStruct.TimeLocker(now + duration, frozenToken));
   }
 
   /**
