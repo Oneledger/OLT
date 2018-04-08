@@ -11,7 +11,7 @@ contract OneledgerToken is StandardToken {
 
   string public name = "Oneledger Token";
   string public symbol = "OLT";
-  uint public decimals = 18;
+  uint256 public decimals = 18;
   uint256 public INITIAL_SUPPLY = 100000000 * (10 ** decimals);
   address public owner;
   address public timelockKeeper;
@@ -28,7 +28,7 @@ contract OneledgerToken is StandardToken {
     if(rPlan.flag == 1){
       uint256 frozenTokens = 0;
       ReleasePlanStruct.TimeLocker[] storage timeLockers = rPlan.timeLockers;
-      for (uint i =0; i < timeLockers.length; i++){
+      for (uint256 i =0; i < timeLockers.length; i++){
         ReleasePlanStruct.TimeLocker storage locker = timeLockers[i];
         if(locker.releaseTime >= now){
           frozenTokens += locker.frozenTokens;
