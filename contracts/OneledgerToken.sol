@@ -103,18 +103,12 @@ contract OneledgerToken is StandardToken {
   }
 
   /**
-  * @dev pause the distribution of the token
-  */
-  function deactivate() public onlyOwner {
-    active_ = false;
-  }
-
-  /**
   * @dev isActive query if this token contract is activated
   */
   function isActive() public constant returns (bool) {
     return active_;
   }
+
   /**
   * @dev transfer  ERC20 standard transfer wrapped with onlyActivedOrOwner, allowedByTimeLocker
   */
