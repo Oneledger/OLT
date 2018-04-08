@@ -6,7 +6,7 @@ library ReleasePlanStruct {
     uint256 frozenTokens; //the token frozen before release time
   }
   struct ReleasePlan {
-    bool flag;
+    bool initialized;
     TimeLocker[] timeLockers;
   }
 }
