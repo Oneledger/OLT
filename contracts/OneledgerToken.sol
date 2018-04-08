@@ -15,7 +15,7 @@ contract OneledgerToken is StandardToken {
   uint256 public INITIAL_SUPPLY = 100000000 * (10 ** decimals);
   address public owner;
   address public timelockKeeper;
-  bool internal active_;
+  bool public active;
   mapping (address => ReleasePlanStruct.ReleasePlan) internal releasePlan;
 
   /**
@@ -59,7 +59,7 @@ contract OneledgerToken is StandardToken {
   * @dev control the action can only be done by actived token and owner can by pass all of this
   */
   modifier onlyActivedOrOwner() {
-    require(msg.sender == owner || active_ == true); // owner can call even when inactive
+    require(msg.sender == owner || active == true); // owner can call even when inactive
     _;
   }
 
@@ -70,7 +70,7 @@ contract OneledgerToken is StandardToken {
       totalSupply_ = INITIAL_SUPPLY;
       balances[msg.sender] = INITIAL_SUPPLY;
       owner = msg.sender;
-      active_ = false;
+      active = false;
   }
 
   /**
@@ -99,14 +99,7 @@ contract OneledgerToken is StandardToken {
   * @dev activate token transfers
   */
   function activate() public onlyOwner {
-    active_ = true;
-  }
-
-  /**
-  * @dev isActive query if this token contract is activated
-  */
-  function isActive() public constant returns (bool) {
-    return active_;
+    active = true;
   }
 
   /**

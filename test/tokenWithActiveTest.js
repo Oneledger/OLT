@@ -25,7 +25,7 @@ contract('OneledgerTokenWithActive', ([owner,spender,user1,user2])=>{
   it('should only be allowed to activate the token contract by owner', async () => {
     await token.activate({from: user1}).should.be.rejectedWith('revert');
     await token.activate();
-    assert.equal(await token.isActive(), true);
+    assert.equal(await token.active(), true);
   });
   it('should be able to do the transfer/transferFrom after the token is activated', async () => {
     await token.transfer(user1, 1000,{from: owner}); //even locked, contract owner can still transfer the token to the user
