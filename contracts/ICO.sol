@@ -29,14 +29,14 @@ contract ICO {
 
   uint256 initialTime;
 
-  bool closed;
+  bool saleClosed;
 
   address owner;
 
   event PurchaseToken(uint256 weiAmount, uint256 rate, uint256 token, address beneficiary);
 
   modifier isNotClosed() {
-    require(closed == false);
+    require(!saleClosed);
     _;
   }
 
@@ -60,7 +60,7 @@ contract ICO {
     token = _token;
     rate = _rate;
     initialTime = now;
-    closed = false;
+    saleClosed = false;
 
     owner = msg.sender;
 
@@ -88,8 +88,8 @@ contract ICO {
   /**
   * @dev close the ICO
   */
-  function icoClosed() public onlyOwner {
-    closed = true;
+  function closeSale() public onlyOwner {
+    saleClosed = true;
   }
 
   function updateRate(uint256 rate_) public onlyOwner {
@@ -108,7 +108,7 @@ contract ICO {
    */
   function buyTokens() public payable isNotClosed returns (bool) {
     uint256 timePassed = now - initialTime;
-    var registration = findUserFromWhiteList(msg.sender);
+    Registration storage registration = findUserFromWhiteList(msg.sender);
     require(registration.isInWhiteList == true);
 
     if (timePassed > 48 hours) {
@@ -163,7 +163,7 @@ contract ICO {
     return true;
   }
 
-  function findUserFromWhiteList(address user) internal view returns (Registration) {
+  function findUserFromWhiteList(address user) internal view returns (Registration storage) {
     for(uint8 i = 0; i < 4; i++) {
       Registration storage registration = tiers[i][user];
       if(registration.isInWhiteList == true) {
