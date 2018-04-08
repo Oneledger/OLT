@@ -16,7 +16,7 @@ contract OneledgerToken is StandardToken {
   address public owner;
   address public timelockKeeper;
   bool public active;
-  mapping (address => ReleasePlanStruct.ReleasePlan) internal releasePlan;
+  mapping (address => ReleasePlanStruct.ReleasePlan) internal releasePlanMap;
 
   /**
   * @dev control the token transfer to be controlled by time locker
@@ -24,7 +24,7 @@ contract OneledgerToken is StandardToken {
   * @param value the total value needs to be allowed
   */
   modifier allowedByTimeLocker(address from, uint256 value) {
-    ReleasePlanStruct.ReleasePlan storage rPlan = releasePlan[from];
+    ReleasePlanStruct.ReleasePlan storage rPlan = releasePlanMap[from];
     if(rPlan.initialized) {
       uint256 frozenTokens = 0;
       ReleasePlanStruct.TimeLocker[] storage timeLockers = rPlan.timeLockers;
@@ -88,7 +88,7 @@ contract OneledgerToken is StandardToken {
   * @param frozenToken uint256
   */
   function addLocker(address from, uint256 duration, uint256 frozenToken) public onlyTimelockKeeper {
-    ReleasePlanStruct.ReleasePlan storage releasePlan_ = releasePlan[from];
+    ReleasePlanStruct.ReleasePlan storage releasePlan_ = releasePlanMap[from];
     if(!releasePlan_.initialized){
       releasePlan_.initialized = true;
     }
