@@ -23,14 +23,14 @@ contract OneledgerToken is StandardToken {
   * @param from address the target address
   * @param value the total value needs to be allowed
   */
-  modifier allowedByTimeLocker(address from, uint256 value)  {
+  modifier allowedByTimeLocker(address from, uint256 value) {
     ReleasePlanStruct.ReleasePlan storage rPlan = releasePlan[from];
-    if(rPlan.initialized){
+    if(rPlan.initialized) {
       uint256 frozenTokens = 0;
       ReleasePlanStruct.TimeLocker[] storage timeLockers = rPlan.timeLockers;
-      for (uint256 i =0; i < timeLockers.length; i++){
+      for (uint256 i = 0; i < timeLockers.length; i++) {
         ReleasePlanStruct.TimeLocker storage locker = timeLockers[i];
-        if(locker.releaseTime >= now){
+        if(locker.releaseTime >= now) {
           frozenTokens += locker.frozenTokens;
         }
       }
