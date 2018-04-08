@@ -115,7 +115,7 @@ contract ICO {
       // Free for all
       return freeForAll();
     } else if (timePassed > 24 hours ) {
-      //Double offering stratege
+      //Double offering stage
       return buyWithLimit(registration.offeredWei.mul(2), resetUsedWei(registration));
     } else {
       //Buy token per limit
@@ -155,7 +155,7 @@ contract ICO {
     }
   }
 
-  function doPurchase(uint256 tokenToBuy) internal  returns (bool) {
+  function doPurchase(uint256 tokenToBuy) internal returns (bool) {
     address _beneficiary = msg.sender;
     require(_beneficiary != 0);
     token.transfer(_beneficiary, tokenToBuy);
