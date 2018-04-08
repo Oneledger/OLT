@@ -1,19 +1,19 @@
 pragma solidity 0.4.21;
 
 import "./ReleasePlanStruct.sol";
+import "zeppelin-solidity/contracts/ownership/Ownable.sol";
 import "zeppelin-solidity/contracts/token/ERC20/StandardToken.sol";
 
 /**
 * @title OneledgerToken
 * @dev this is the oneledger token
 */
-contract OneledgerToken is StandardToken {
+contract OneledgerToken is StandardToken, Ownable {
 
   string public name = "Oneledger Token";
   string public symbol = "OLT";
   uint256 public decimals = 18;
   uint256 public INITIAL_SUPPLY = 100000000 * (10 ** decimals);
-  address public owner;
   address public timelockKeeper;
   bool public active;
   mapping (address => ReleasePlanStruct.ReleasePlan) internal releasePlanMap;
@@ -36,14 +36,6 @@ contract OneledgerToken is StandardToken {
       }
       require( balances[from] >= value + frozenTokens);
     }
-    _;
-  }
-
-  /**
-  * @dev control the behavior can only be done by owner
-  */
-  modifier onlyOwner() {
-    require(msg.sender == owner);
     _;
   }
 
