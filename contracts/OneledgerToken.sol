@@ -61,7 +61,6 @@ contract OneledgerToken is StandardToken, Ownable {
   function OneledgerToken() public {
       totalSupply_ = INITIAL_SUPPLY;
       balances[msg.sender] = INITIAL_SUPPLY;
-      owner = msg.sender;
       active = false;
   }
 

@@ -1,10 +1,11 @@
 pragma solidity 0.4.21;
 
 import "./OneledgerToken.sol";
-import "zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
 import "zeppelin-solidity/contracts/math/SafeMath.sol";
+import "zeppelin-solidity/contracts/ownership/Ownable.sol";
+import "zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
 
-contract ICO {
+contract ICO is Ownable {
   using SafeMath for uint256;
 
   struct Registration {
@@ -31,20 +32,10 @@ contract ICO {
 
   bool saleClosed;
 
-  address owner;
-
   event PurchaseToken(uint256 weiAmount, uint256 rate, uint256 token, address beneficiary);
 
   modifier isNotClosed() {
     require(!saleClosed);
-    _;
-  }
-
-  /**
-  * @dev control the behavior can only be done by owner
-  */
-  modifier onlyOwner() {
-    require(msg.sender == owner);
     _;
   }
 
@@ -61,8 +52,6 @@ contract ICO {
     rate = _rate;
     initialTime = now;
     saleClosed = false;
-
-    owner = msg.sender;
 
     tiers[0][address(0)] =  Registration(0,false, 0, 0, now);
   }
