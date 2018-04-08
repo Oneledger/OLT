@@ -59,7 +59,7 @@ contract OneledgerToken is StandardToken {
   * @dev control the action can only be done by actived token and owner can by pass all of this
   */
   modifier onlyActivedOrOwner() {
-    require(msg.sender == owner || active_ == true);//owner will by pass the active
+    require(msg.sender == owner || active_ == true); // owner can call even when inactive
     _;
   }
 
@@ -96,23 +96,23 @@ contract OneledgerToken is StandardToken {
   }
 
   /**
-  * @dev active to active the token
+  * @dev activate token transfers
   */
-  function active() public onlyOwner {
+  function activate() public onlyOwner {
     active_ = true;
   }
 
   /**
-  * @dev  pause the distribution of the token
+  * @dev pause the distribution of the token
   */
-  function disActive() public onlyOwner {
+  function deactivate() public onlyOwner {
     active_ = false;
   }
 
   /**
-  * @dev isActived query if this token contract is activated
+  * @dev isActive query if this token contract is activated
   */
-  function isActived() public constant returns (bool) {
+  function isActive() public constant returns (bool) {
     return active_;
   }
   /**

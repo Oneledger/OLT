@@ -11,7 +11,7 @@ contract('OneledgerTokenWithTimeLock', ([owner,spender,user1,user2,user3])=>{
   let token = null
   beforeEach(async ()=>{
     token = await OneledgerToken.new();
-    await token.active(); //first to active the token
+    await token.activate(); // first to activate the token
     await token.transfer(user1, 1000,{from: owner});
     await token.approve(spender,1000, {from: user1});
     await token.setTimelockKeeper(owner);

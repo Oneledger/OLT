@@ -10,7 +10,7 @@ contract('OneledgerToken', function([owner,investor1, investor2, spender]){
   const expectedTotalSupply = 100000000 * (10 ** 18);
   beforeEach(async ()=>{
     token = await OneledgerToken.new();
-    await token.active();
+    await token.activate();
   });
   it('has an owner',async ()=>{
     assert.equal(await token.owner(), owner);

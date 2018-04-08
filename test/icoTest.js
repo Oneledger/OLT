@@ -14,7 +14,7 @@ contract('ICO', function([tokenOwner, wallet, user, nonWhiteListUser]) {
     token = await OneledgerToken.new();
     ico = await ICO.new(wallet,token.address, 10);
     token.transfer(ico.address, 100000000000000); //ICO contract will hold the token and walletOwner will receive eth
-    await token.active();
+    await token.activate();
   });
   it('should not be able to buy token, since user is not in the whitelist', async () => {
     let eth_before = await web3.eth.getBalance(wallet);
