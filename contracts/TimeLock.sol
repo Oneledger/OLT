@@ -1,14 +1,14 @@
 pragma solidity 0.4.21;
 
 import "./OneledgerToken.sol";
+import "zeppelin-solidity/contracts/ownership/Ownable.sol";
 
 /**
  * @title TimeLock
  * @dev This is the contract to deposit token with condition of timelocking to the user
  */
-contract TimeLock {
+contract TimeLock is Ownable{
   OneledgerToken token;
-  address owner;
 
   event DepositWithTimeLock(address user,
     uint256 depositToken,
@@ -23,7 +23,6 @@ contract TimeLock {
   */
   function TimeLock(OneledgerToken token_) public {
       token = token_;
-      owner = msg.sender;
   }
 
   /**
@@ -36,8 +35,7 @@ contract TimeLock {
     uint256 startingFrom_,
     uint256 period_,
     uint256 releaseTokenPerPeriod_
-    ) public returns (bool){
-    require(msg.sender == owner);
+    ) public onlyOwner returns (bool){
     require(depositToken_ > 0);
     require(releaseTokenPerPeriod_ > 0);
     require(depositToken_ > releaseTokenPerPeriod_);
