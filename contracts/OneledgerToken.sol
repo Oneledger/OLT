@@ -40,7 +40,7 @@ contract OneledgerToken is StandardToken, Ownable {
   }
 
   /**
-  * @dev control the behavior can only be done by timelockKeeper
+  * @dev restrict function to be callable only by timelockKeeper
   */
   modifier onlyTimelockKeeper() {
     require(msg.sender == timelockKeeper);
@@ -48,7 +48,7 @@ contract OneledgerToken is StandardToken, Ownable {
   }
 
   /**
-  * @dev control the action can only be done by actived token and owner can by pass all of this
+  * @dev restrict function to be callable by the owner or when token is active
   */
   modifier onlyActiveOrOwner() {
     require(msg.sender == owner || active == true); // owner can call even when inactive
