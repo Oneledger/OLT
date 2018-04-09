@@ -21,10 +21,6 @@ contract('ICO', function([tokenOwner, wallet, user, nonWhiteListUser]) {
     let eth_after = await web3.eth.getBalance(wallet);
     await ico.sendTransaction({from: user, value: 10000000000000}).should.be.rejectedWith('revert');
     assert.equal(eth_after.minus(eth_before), 0);
-    // let balance = await token.balanceOf(user);
-    // assert.equal(balance, 100000000000000);
-    // let eth_after = await web3.eth.getBalance(wallet);
-    // assert.equal(eth_after.minus(eth_before), 10000000000000);
   });
   it('should be able to buy token when the user was added in the whitelist', async () => {
     await ico.whiteList(0,[user],100000000);
