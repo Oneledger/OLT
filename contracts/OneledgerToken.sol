@@ -1,6 +1,7 @@
 pragma solidity 0.4.21;
 
 import "./ReleasePlanStruct.sol";
+import "zeppelin-solidity/contracts/math/SafeMath.sol";
 import "zeppelin-solidity/contracts/ownership/Ownable.sol";
 import "zeppelin-solidity/contracts/token/ERC20/StandardToken.sol";
 
@@ -9,6 +10,7 @@ import "zeppelin-solidity/contracts/token/ERC20/StandardToken.sol";
 * @dev this is the oneledger token
 */
 contract OneledgerToken is StandardToken, Ownable {
+  using SafeMath for uint256;
 
   string public name = "Oneledger Token";
   string public symbol = "OLT";
