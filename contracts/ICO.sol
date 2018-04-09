@@ -136,9 +136,7 @@ contract ICO is Ownable {
   }
 
   function doPurchase(uint256 tokenToBuy) internal returns (bool) {
-    address _beneficiary = msg.sender;
-    require(_beneficiary != 0);
-    token.transfer(_beneficiary, tokenToBuy);
+    token.transfer(msg.sender, tokenToBuy);
     wallet.transfer(msg.value);
     return true;
   }
