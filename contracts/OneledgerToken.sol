@@ -50,7 +50,7 @@ contract OneledgerToken is StandardToken, Ownable {
   /**
   * @dev control the action can only be done by actived token and owner can by pass all of this
   */
-  modifier onlyActivedOrOwner() {
+  modifier onlyActiveOrOwner() {
     require(msg.sender == owner || active == true); // owner can call even when inactive
     _;
   }
@@ -94,16 +94,16 @@ contract OneledgerToken is StandardToken, Ownable {
   }
 
   /**
-  * @dev transfer  ERC20 standard transfer wrapped with onlyActivedOrOwner, allowedByTimeLocker
+  * @dev transfer  ERC20 standard transfer wrapped with onlyActiveOrOwner, allowedByTimeLocker
   */
-  function transfer(address to, uint256 value) public onlyActivedOrOwner allowedByTimeLocker(msg.sender,value) returns (bool) {
+  function transfer(address to, uint256 value) public onlyActiveOrOwner allowedByTimeLocker(msg.sender,value) returns (bool) {
     return super.transfer(to, value);
   }
 
   /**
-  * @dev transfer  ERC20 standard transferFrom wrapped with onlyActivedOrOwner, allowedByTimeLocker
+  * @dev transfer  ERC20 standard transferFrom wrapped with onlyActiveOrOwner, allowedByTimeLocker
   */
-  function transferFrom(address from, address to, uint256 value) public onlyActivedOrOwner allowedByTimeLocker(from, value) returns (bool) {
+  function transferFrom(address from, address to, uint256 value) public onlyActiveOrOwner allowedByTimeLocker(from, value) returns (bool) {
     return super.transferFrom(from, to, value);
   }
 }
