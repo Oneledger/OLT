@@ -34,7 +34,7 @@ contract OneledgerToken is StandardToken, Ownable {
           frozenTokens += locker.frozenTokens;
         }
       }
-      require( balances[from] >= value + frozenTokens);
+      require(balances[from] >= value + frozenTokens);
     }
     _;
   }
@@ -69,7 +69,7 @@ contract OneledgerToken is StandardToken, Ownable {
   * @param keeper address the keeper's contract address
   */
   function setTimelockKeeper(address keeper) public onlyOwner {
-    timelockKeeper =  keeper;
+    timelockKeeper = keeper;
   }
 
   /**

@@ -44,7 +44,7 @@ contract ICO is Ownable {
     initialTime = now;
     saleClosed = false;
 
-    tiers[0][address(0)] =  Registration(0,false, 0, 0, now);
+    tiers[0][address(0)] =  Registration(0, false, 0, 0, now);
   }
 
   /**
