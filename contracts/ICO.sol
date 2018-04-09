@@ -17,8 +17,8 @@ contract ICO is Ownable {
   }
 
   ERC20 public token;
-  address public wallet;  // Address where funds are collected
-  uint256 public rate; // How many token units a buyer gets per eth
+  address public wallet; // Address where funds are collected
+  uint256 public rate;   // How many token units a buyer gets per eth
   mapping(uint8 => mapping (address => Registration)) tiers;
   uint256 initialTime;
   bool saleClosed;
