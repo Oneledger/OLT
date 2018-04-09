@@ -55,8 +55,8 @@ contract ICO is Ownable {
   * param capWeiPerTier
   */
   function whiteList(uint8 tierIndex, address[] toList, uint256 weiPerContributor) public onlyOwner {
-    require(tierIndex>=0 && tierIndex < 4);
-    for (uint32 i = 0 ; i < toList.length; i ++){
+    require(tierIndex >= 0 && tierIndex < 4);
+    for (uint32 i = 0; i < toList.length; i++) {
       tiers[tierIndex][toList[i]].isInWhiteList = true;
       tiers[tierIndex][toList[i]].offeredWei = weiPerContributor; //overriding even if the address exists
       tiers[tierIndex][toList[i]].usedWei = 0;
