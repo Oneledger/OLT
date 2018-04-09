@@ -72,10 +72,6 @@ contract ICO is Ownable {
     saleClosed = true;
   }
 
-  function updateRate(uint256 rate_) public onlyOwner {
-    rate = rate_;
-  }
-
   /**
    * @dev fallback function ***DO NOT OVERRIDE***
    */
@@ -123,7 +119,7 @@ contract ICO is Ownable {
     }
   }
 
-  function buyWithLimit(uint256 limitation, Registration registration) internal returns(bool) {
+  function buyWithLimit(uint256 limitation, Registration registration) internal returns (bool) {
     uint256 weiAmount = msg.value;
     require(weiAmount != 0 && weiAmount <= (limitation - registration.usedWei));
     uint256 tokenToBuy = weiAmount.mul(rate);
