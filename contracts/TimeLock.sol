@@ -7,7 +7,7 @@ import "zeppelin-solidity/contracts/ownership/Ownable.sol";
  * @title TimeLock
  * @dev A contract responsible for deposit timelocked tokens for users
  */
-contract TimeLock is Ownable{
+contract TimeLock is Ownable {
   OneledgerToken token;
 
   event DepositWithTimeLock(address user,
