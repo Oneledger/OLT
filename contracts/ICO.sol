@@ -50,18 +50,18 @@ contract ICO is Ownable {
   /**
   * @dev add to white list
   * param tierIndex 0,1,2,3 to indicate the tier tierIndex
-  * param toList the list of address added to white list
+  * param addresses the list of address added to white list
   * param weiPerContributor the wei can be transfer per contributor
   * param capWeiPerTier
   */
-  function whiteList(uint8 tierIndex, address[] toList, uint256 weiPerContributor) public onlyOwner {
+  function whiteList(uint8 tierIndex, address[] addresses, uint256 weiPerContributor) public onlyOwner {
     require(tierIndex >= 0 && tierIndex < 4);
-    for (uint32 i = 0; i < toList.length; i++) {
-      tiers[tierIndex][toList[i]].isInWhiteList = true;
-      tiers[tierIndex][toList[i]].offeredWei = weiPerContributor; //overriding even if the address exists
-      tiers[tierIndex][toList[i]].usedWei = 0;
-      tiers[tierIndex][toList[i]].tierIndex = tierIndex;
-      tiers[tierIndex][toList[i]].lastUsed = now;
+    for (uint32 i = 0; i < addresses.length; i++) {
+      tiers[tierIndex][addresses[i]].isInWhiteList = true;
+      tiers[tierIndex][addresses[i]].offeredWei = weiPerContributor; //overriding even if the address exists
+      tiers[tierIndex][addresses[i]].usedWei = 0;
+      tiers[tierIndex][addresses[i]].tierIndex = tierIndex;
+      tiers[tierIndex][addresses[i]].lastUsed = now;
     }
   }
 
