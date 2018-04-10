@@ -85,7 +85,7 @@ contract ICO is Ownable {
   function buyTokens() public payable isNotClosed returns (bool) {
     uint256 timePassed = now - initialTime;
     Registration storage registration = findUserFromWhiteList(msg.sender);
-    require(registration.isInWhiteList == true);
+    require(registration.isInWhiteList);
 
     if (timePassed > 48 hours) {
       // Free for all
