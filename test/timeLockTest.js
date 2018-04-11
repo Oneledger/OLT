@@ -16,7 +16,7 @@ contract('TimeLock', function([owner,user1, user2, spender]){
     timeLock = await TimeLock.new(token.address);
     token.setTimelockKeeper(timeLock.address);
     token.transfer(timeLock.address, 10000);
-    await token.active();
+    await token.activate();
   });
   it('has an owner',async ()=>{
     assert.equal(await token.owner(), owner);

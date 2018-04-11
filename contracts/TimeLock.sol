@@ -1,14 +1,14 @@
-pragma solidity ^0.4.11;
+pragma solidity 0.4.21;
 
 import "./OneledgerToken.sol";
+import "zeppelin-solidity/contracts/ownership/Ownable.sol";
 
 /**
  * @title TimeLock
- * @dev This is the contract to deposit token with condition of timelocking to the user
+ * @dev A contract responsible for deposit timelocked tokens for users
  */
-contract TimeLock {
+contract TimeLock is Ownable {
   OneledgerToken token;
-  address owner;
 
   event DepositWithTimeLock(address user,
     uint256 depositToken,
@@ -23,7 +23,6 @@ contract TimeLock {
   */
   function TimeLock(OneledgerToken token_) public {
       token = token_;
-      owner = msg.sender;
   }
 
   /**
@@ -36,16 +35,15 @@ contract TimeLock {
     uint256 startingFrom_,
     uint256 period_,
     uint256 releaseTokenPerPeriod_
-    ) public returns (bool){
-    require(msg.sender == owner);
+    ) public onlyOwner returns (bool){
     require(depositToken_ > 0);
     require(releaseTokenPerPeriod_ > 0);
     require(depositToken_ > releaseTokenPerPeriod_);
 
     uint256 unReleasedToken = depositToken_;
     uint256 duration = startingFrom_;
-    while(unReleasedToken > releaseTokenPerPeriod_){
-      token.addLocker(user_, duration, releaseTokenPerPeriod_); //after 4 weeks, release 300 token
+    while (unReleasedToken > releaseTokenPerPeriod_) {
+      token.addLocker(user_, duration, releaseTokenPerPeriod_);
       unReleasedToken -= releaseTokenPerPeriod_;
       duration += period_;
     }

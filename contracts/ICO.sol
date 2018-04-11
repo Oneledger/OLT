@@ -1,10 +1,11 @@
-pragma solidity ^0.4.11;
+pragma solidity 0.4.21;
 
 import "./OneledgerToken.sol";
-import "zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
 import "zeppelin-solidity/contracts/math/SafeMath.sol";
+import "zeppelin-solidity/contracts/ownership/Ownable.sol";
+import "zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
 
-contract ICO {
+contract ICO is Ownable {
   using SafeMath for uint256;
 
   struct Registration {
@@ -16,35 +17,16 @@ contract ICO {
   }
 
   ERC20 public token;
-
-  // Address where funds are collected
-  address public wallet;
-
-  // How many token units a buyer gets per eth
-  uint256 public rate;
-
-
+  address public wallet; // Address where funds are collected
+  uint256 public rate;   // How many token units a buyer gets per eth
   mapping(uint8 => mapping (address => Registration)) tiers;
-
-
   uint256 initialTime;
-
-  bool closed;
-
-  address owner;
+  bool saleClosed;
 
   event PurchaseToken(uint256 weiAmount, uint256 rate, uint256 token, address beneficiary);
 
   modifier isNotClosed() {
-    require(closed == false);
-    _;
-  }
-
-  /**
-  * @dev control the behavior can only be done by owner
-  */
-  modifier onlyOwner() {
-    require(msg.sender == owner);
+    require(!saleClosed);
     _;
   }
 
@@ -60,40 +42,34 @@ contract ICO {
     token = _token;
     rate = _rate;
     initialTime = now;
-    closed = false;
+    saleClosed = false;
 
-    owner = msg.sender;
-
-    tiers[0][address(0)] =  Registration(0,false, 0, 0, now);
+    tiers[0][address(0)] =  Registration(0, false, 0, 0, now);
   }
 
   /**
   * @dev add to white list
   * param tierIndex 0,1,2,3 to indicate the tier tierIndex
-  * param toList the list of address added to white list
+  * param addresses the list of address added to white list
   * param weiPerContributor the wei can be transfer per contributor
   * param capWeiPerTier
   */
-  function whiteList(uint8 tierIndex, address[] toList, uint256 weiPerContributor) public onlyOwner{
-    require(tierIndex>=0 && tierIndex < 4);
-    for (uint32 i = 0 ; i < toList.length; i ++){
-      tiers[tierIndex][toList[i]].isInWhiteList = true;
-      tiers[tierIndex][toList[i]].offeredWei = weiPerContributor; //overriding even if the address exists
-      tiers[tierIndex][toList[i]].usedWei = 0;
-      tiers[tierIndex][toList[i]].tierIndex = tierIndex;
-      tiers[tierIndex][toList[i]].lastUsed = now;
+  function whiteList(uint8 tierIndex, address[] addresses, uint256 weiPerContributor) public onlyOwner {
+    require(tierIndex >= 0 && tierIndex < 4);
+    for (uint32 i = 0; i < addresses.length; i++) {
+      tiers[tierIndex][addresses[i]].isInWhiteList = true;
+      tiers[tierIndex][addresses[i]].offeredWei = weiPerContributor; //overriding even if the address exists
+      tiers[tierIndex][addresses[i]].usedWei = 0;
+      tiers[tierIndex][addresses[i]].tierIndex = tierIndex;
+      tiers[tierIndex][addresses[i]].lastUsed = now;
     }
   }
 
   /**
   * @dev close the ICO
   */
-  function icoClosed() public onlyOwner{
-    closed = true;
-  }
-
-  function updateRate(uint256 rate_) public onlyOwner{
-    rate = rate_;
+  function closeSale() public onlyOwner {
+    saleClosed = true;
   }
 
   /**
@@ -106,18 +82,18 @@ contract ICO {
   /**
    * @dev buy tokens
    */
-  function buyTokens() public payable isNotClosed returns (bool){
+  function buyTokens() public payable isNotClosed returns (bool) {
     uint256 timePassed = now - initialTime;
-    var registration = findUserFromWhiteList(msg.sender);
-    require(registration.isInWhiteList == true);
+    Registration storage registration = findUserFromWhiteList(msg.sender);
+    require(registration.isInWhiteList);
 
     if (timePassed > 48 hours) {
       // Free for all
       return freeForAll();
-    }else if (timePassed > 24 hours ){
-      //Double offering stratege
+    } else if (timePassed > 24 hours ) {
+      //Double offering stage
       return buyWithLimit(registration.offeredWei.mul(2), resetUsedWei(registration));
-    }else{
+    } else {
       //Buy token per limit
       return buyWithLimit(registration.offeredWei, registration);
     }
@@ -128,22 +104,22 @@ contract ICO {
     if(registration.lastUsed - initialTime <= 24 hours) {
       tiers[registration.tierIndex][msg.sender].usedWei = 0;
       return tiers[registration.tierIndex][msg.sender];
-    }else{
+    } else {
       return registration;
     }
   }
 
-  function freeForAll() internal returns (bool){
+  function freeForAll() internal returns (bool) {
     uint256 weiAmount = msg.value;
     require(weiAmount != 0);
     uint256 tokenToBuy = weiAmount.mul(rate);
-    if(doPurchase(tokenToBuy)){
+    if (doPurchase(tokenToBuy)) {
       PurchaseToken(weiAmount, rate, tokenToBuy, msg.sender);
       return true;
     }
   }
 
-  function buyWithLimit(uint256 limitation, Registration registration) internal returns(bool){
+  function buyWithLimit(uint256 limitation, Registration registration) internal returns (bool) {
     uint256 weiAmount = msg.value;
     require(weiAmount != 0 && weiAmount <= (limitation - registration.usedWei));
     uint256 tokenToBuy = weiAmount.mul(rate);
@@ -155,16 +131,14 @@ contract ICO {
     }
   }
 
-  function doPurchase(uint256 tokenToBuy) internal  returns (bool){
-    address _beneficiary = msg.sender;
-    require(_beneficiary != 0);
-    token.transfer(_beneficiary, tokenToBuy);
+  function doPurchase(uint256 tokenToBuy) internal returns (bool) {
+    token.transfer(msg.sender, tokenToBuy);
     wallet.transfer(msg.value);
     return true;
   }
 
-  function findUserFromWhiteList(address user) internal view returns (Registration){
-    for(uint8 i = 0; i < 4; i++){
+  function findUserFromWhiteList(address user) internal view returns (Registration storage) {
+    for(uint8 i = 0; i < 4; i++) {
       Registration storage registration = tiers[i][user];
       if(registration.isInWhiteList == true) {
         return registration;
