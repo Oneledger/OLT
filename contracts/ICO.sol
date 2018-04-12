@@ -114,7 +114,7 @@ contract ICO is Ownable {
     require(weiAmount != 0);
     uint256 tokenToBuy = weiAmount.mul(rate);
     if (doPurchase(tokenToBuy)) {
-      PurchaseToken(weiAmount, rate, tokenToBuy, msg.sender);
+      emit PurchaseToken(weiAmount, rate, tokenToBuy, msg.sender);
       return true;
     }
   }
@@ -126,7 +126,7 @@ contract ICO is Ownable {
     if(doPurchase(tokenToBuy)){
       tiers[registration.tierIndex][msg.sender].usedWei += weiAmount;
       tiers[registration.tierIndex][msg.sender].lastUsed = now;
-      PurchaseToken(weiAmount, rate, tokenToBuy, msg.sender);
+      emit PurchaseToken(weiAmount, rate, tokenToBuy, msg.sender);
       return true;
     }
   }

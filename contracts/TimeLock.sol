@@ -49,7 +49,7 @@ contract TimeLock is Ownable {
     }
     token.addLocker(user_, duration, unReleasedToken);
     token.transfer(user_, depositToken_);
-    DepositWithTimeLock(user_, depositToken_, startingFrom_, period_, releaseTokenPerPeriod_);
+    emit DepositWithTimeLock(user_, depositToken_, startingFrom_, period_, releaseTokenPerPeriod_);
     return true;
   }
 }
