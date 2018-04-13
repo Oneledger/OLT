@@ -1,6 +1,4 @@
 pragma solidity 0.4.21;
-
-import "./ReleasePlanStruct.sol";
 import "zeppelin-solidity/contracts/math/SafeMath.sol";
 import "zeppelin-solidity/contracts/ownership/Ownable.sol";
 import "zeppelin-solidity/contracts/token/ERC20/StandardToken.sol";
@@ -11,6 +9,14 @@ import "zeppelin-solidity/contracts/token/ERC20/StandardToken.sol";
 */
 contract OneledgerToken is StandardToken, Ownable {
   using SafeMath for uint256;
+  struct TimeLocker {
+    uint256 releaseTime;
+    uint256 frozenTokens; // the number of tokens frozen until 'releaseTime'
+  }
+  struct ReleasePlan {
+    bool initialized;
+    TimeLocker[] timeLockers;
+  }
 
   string public name = "Oneledger Token";
   string public symbol = "OLT";
@@ -18,7 +24,7 @@ contract OneledgerToken is StandardToken, Ownable {
   uint256 public INITIAL_SUPPLY = 100000000 * (10 ** decimals);
   address public timelockKeeper;
   bool public active;
-  mapping (address => ReleasePlanStruct.ReleasePlan) internal releasePlanMap;
+  mapping (address => ReleasePlan) internal releasePlanMap;
 
   /**
   * @dev control the token transfer to be controlled by time locker
@@ -26,12 +32,12 @@ contract OneledgerToken is StandardToken, Ownable {
   * @param value the total value needs to be allowed
   */
   modifier allowedByTimeLocker(address from, uint256 value) {
-    ReleasePlanStruct.ReleasePlan storage rPlan = releasePlanMap[from];
+    ReleasePlan storage rPlan = releasePlanMap[from];
     if(rPlan.initialized) {
       uint256 frozenTokens = 0;
-      ReleasePlanStruct.TimeLocker[] storage timeLockers = rPlan.timeLockers;
+      TimeLocker[] storage timeLockers = rPlan.timeLockers;
       for (uint256 i = 0; i < timeLockers.length; i++) {
-        ReleasePlanStruct.TimeLocker storage locker = timeLockers[i];
+        TimeLocker storage locker = timeLockers[i];
         if(locker.releaseTime >= now) {
           frozenTokens += locker.frozenTokens;
         }
@@ -81,11 +87,11 @@ contract OneledgerToken is StandardToken, Ownable {
   * @param frozenToken uint256
   */
   function addLocker(address from, uint256 duration, uint256 frozenToken) public onlyTimelockKeeper {
-    ReleasePlanStruct.ReleasePlan storage releasePlan_ = releasePlanMap[from];
+    ReleasePlan storage releasePlan_ = releasePlanMap[from];
     if(!releasePlan_.initialized){
       releasePlan_.initialized = true;
     }
-    releasePlan_.timeLockers.push(ReleasePlanStruct.TimeLocker(now + duration, frozenToken));
+    releasePlan_.timeLockers.push(TimeLocker(now + duration, frozenToken));
   }
 
   /**
