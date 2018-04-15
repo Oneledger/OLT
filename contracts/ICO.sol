@@ -9,7 +9,6 @@ contract ICO is Ownable {
   using SafeMath for uint256;
 
   struct Registration {
-    uint8 tierIndex;
     bool isInWhiteList;
     uint256 offeredWei;
     uint256 usedWei;
@@ -19,7 +18,7 @@ contract ICO is Ownable {
   ERC20 public token;
   address public wallet; // Address where funds are collected
   uint256 public rate;   // How many token units a buyer gets per eth
-  mapping(uint8 => mapping (address => Registration)) tiers;
+  mapping(address => Registration) whiteList;
   uint256 initialTime;
   bool saleClosed;
 
@@ -44,24 +43,21 @@ contract ICO is Ownable {
     initialTime = now;
     saleClosed = false;
 
-    tiers[0][address(0)] =  Registration(0, false, 0, 0, now);
+    whiteList[address(0)] =  Registration(false, 0, 0, now); //A placeholder for buyer which is not in the whitelist
   }
 
   /**
   * @dev add to white list
-  * param tierIndex 0,1,2,3 to indicate the tier tierIndex
   * param addresses the list of address added to white list
   * param weiPerContributor the wei can be transfer per contributor
-  * param capWeiPerTier
+  * param capWei for the user in this list
   */
-  function whiteList(uint8 tierIndex, address[] addresses, uint256 weiPerContributor) public onlyOwner {
-    require(tierIndex >= 0 && tierIndex < 4);
+  function addToWhiteList(address[] addresses, uint256 weiPerContributor) public onlyOwner {
     for (uint32 i = 0; i < addresses.length; i++) {
-      tiers[tierIndex][addresses[i]].isInWhiteList = true;
-      tiers[tierIndex][addresses[i]].offeredWei = weiPerContributor; //overriding even if the address exists
-      tiers[tierIndex][addresses[i]].usedWei = 0;
-      tiers[tierIndex][addresses[i]].tierIndex = tierIndex;
-      tiers[tierIndex][addresses[i]].lastUsed = now;
+      whiteList[addresses[i]].isInWhiteList = true;
+      whiteList[addresses[i]].offeredWei = weiPerContributor; //overriding even if the address exists
+      whiteList[addresses[i]].usedWei = 0;
+      whiteList[addresses[i]].lastUsed = now;
     }
   }
 
@@ -102,8 +98,8 @@ contract ICO is Ownable {
 
   function resetUsedWei(Registration registration) internal returns (Registration) {
     if(registration.lastUsed - initialTime <= 24 hours) {
-      tiers[registration.tierIndex][msg.sender].usedWei = 0;
-      return tiers[registration.tierIndex][msg.sender];
+      whiteList[msg.sender].usedWei = 0;
+      return whiteList[msg.sender];
     } else {
       return registration;
     }
@@ -124,8 +120,8 @@ contract ICO is Ownable {
     require(weiAmount != 0 && weiAmount <= (limitation - registration.usedWei));
     uint256 tokenToBuy = weiAmount.mul(rate);
     if(doPurchase(tokenToBuy)){
-      tiers[registration.tierIndex][msg.sender].usedWei += weiAmount;
-      tiers[registration.tierIndex][msg.sender].lastUsed = now;
+      whiteList[msg.sender].usedWei += weiAmount;
+      whiteList[msg.sender].lastUsed = now;
       emit PurchaseToken(weiAmount, rate, tokenToBuy, msg.sender);
       return true;
     }
@@ -138,13 +134,11 @@ contract ICO is Ownable {
   }
 
   function findUserFromWhiteList(address user) internal view returns (Registration storage) {
-    for(uint8 i = 0; i < 4; i++) {
-      Registration storage registration = tiers[i][user];
-      if(registration.isInWhiteList == true) {
-        return registration;
-      }
+    Registration storage registration = whiteList[user];
+    if(registration.isInWhiteList == true) {
+      return registration;
     }
 
-    return tiers[0][address(0)];
+    return whiteList[address(0)];
   }
 }
