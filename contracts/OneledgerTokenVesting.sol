@@ -55,7 +55,9 @@ contract OneledgerTokenVesting is Ownable{
    function release(OneledgerToken token) public {
      require(token.balanceOf(this) >=0
               && now >= startFrom);
-     var (amountToTransfer, numberOfPeriod)  = releasableAmount(token);
+     uint256 amountToTransfer;
+     uint256 numberOfPeriod;
+     (amountToTransfer, numberOfPeriod)  = releasableAmount(token);
      require(amountToTransfer > 0);
      token.transfer(beneficiary, amountToTransfer);
      numberOfReleased_ += numberOfPeriod;
@@ -69,7 +71,7 @@ contract OneledgerTokenVesting is Ownable{
     function revoke(OneledgerToken token) public onlyOwner {
       require(revocable);
       uint256 availableBalance = token.balanceOf(this);
-      require(availableBalance >=0);
+      require(availableBalance > 0);
       token.transfer(owner, availableBalance);
       emit Revoked();
     }

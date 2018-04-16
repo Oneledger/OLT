@@ -8,17 +8,16 @@ import "zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
 contract ICO is Ownable {
   using SafeMath for uint256;
 
-  struct Registration {
+  struct WhiteListRecord {
     bool isInWhiteList;
     uint256 offeredWei;
-    uint256 usedWei;
-    uint256 lastUsed;
+    uint256 lastPurchasedTimestamp;
   }
 
   ERC20 public token;
   address public wallet; // Address where funds are collected
   uint256 public rate;   // How many token units a buyer gets per eth
-  mapping(address => Registration) whiteList;
+  mapping(address => WhiteListRecord) whiteList;
   uint256 initialTime;
   bool saleClosed;
 
@@ -26,6 +25,18 @@ contract ICO is Ownable {
 
   modifier isNotClosed() {
     require(!saleClosed);
+    _;
+  }
+
+  modifier validatePurchase() {
+    require(whiteList[msg.sender].isInWhiteList);
+    require(now - whiteList[msg.sender].lastPurchasedTimestamp > 24 hours); //can only purchase once every 24 hours
+    uint256 timeFrame = now - initialTime;
+    if (timeFrame <= 24 hours) { // day 1
+      require(msg.value <= whiteList[msg.sender].offeredWei);
+    }else if(timeFrame <= 48 hours) { //day 2
+      require(msg.value <= whiteList[msg.sender].offeredWei.mul(2));
+    }
     _;
   }
 
@@ -43,7 +54,7 @@ contract ICO is Ownable {
     initialTime = now;
     saleClosed = false;
 
-    whiteList[address(0)] =  Registration(false, 0, 0, now); //A placeholder for buyer which is not in the whitelist
+    whiteList[address(0)] =  WhiteListRecord(false, 0 , 0); //A placeholder for buyer which is not in the whitelist
   }
 
   /**
@@ -54,10 +65,7 @@ contract ICO is Ownable {
   */
   function addToWhiteList(address[] addresses, uint256 weiPerContributor) public onlyOwner {
     for (uint32 i = 0; i < addresses.length; i++) {
-      whiteList[addresses[i]].isInWhiteList = true;
-      whiteList[addresses[i]].offeredWei = weiPerContributor; //overriding even if the address exists
-      whiteList[addresses[i]].usedWei = 0;
-      whiteList[addresses[i]].lastUsed = now;
+      whiteList[addresses[i]] = WhiteListRecord(true, weiPerContributor, 0);
     }
   }
 
@@ -78,67 +86,17 @@ contract ICO is Ownable {
   /**
    * @dev buy tokens
    */
-  function buyTokens() public payable isNotClosed returns (bool) {
-    uint256 timePassed = now - initialTime;
-    Registration storage registration = findUserFromWhiteList(msg.sender);
-    require(registration.isInWhiteList);
-
-    if (timePassed > 48 hours) {
-      // Free for all
-      return freeForAll();
-    } else if (timePassed > 24 hours ) {
-      //Double offering stage
-      return buyWithLimit(registration.offeredWei.mul(2), resetUsedWei(registration));
-    } else {
-      //Buy token per limit
-      return buyWithLimit(registration.offeredWei, registration);
-    }
-
+  function buyTokens() public payable isNotClosed validatePurchase {
+    doPurchase();
+    whiteList[msg.sender].lastPurchasedTimestamp = now;
   }
 
-  function resetUsedWei(Registration registration) internal returns (Registration) {
-    if(registration.lastUsed - initialTime <= 24 hours) {
-      whiteList[msg.sender].usedWei = 0;
-      return whiteList[msg.sender];
-    } else {
-      return registration;
-    }
-  }
-
-  function freeForAll() internal returns (bool) {
-    uint256 weiAmount = msg.value;
-    require(weiAmount != 0);
-    uint256 tokenToBuy = weiAmount.mul(rate);
-    if (doPurchase(tokenToBuy)) {
-      emit PurchaseToken(weiAmount, rate, tokenToBuy, msg.sender);
-      return true;
-    }
-  }
-
-  function buyWithLimit(uint256 limitation, Registration registration) internal returns (bool) {
-    uint256 weiAmount = msg.value;
-    require(weiAmount != 0 && weiAmount <= (limitation - registration.usedWei));
-    uint256 tokenToBuy = weiAmount.mul(rate);
-    if(doPurchase(tokenToBuy)){
-      whiteList[msg.sender].usedWei += weiAmount;
-      whiteList[msg.sender].lastUsed = now;
-      emit PurchaseToken(weiAmount, rate, tokenToBuy, msg.sender);
-      return true;
-    }
-  }
-
-  function doPurchase(uint256 tokenToBuy) internal returns (bool) {
+  /**
+  *@dev do purchase
+  */
+  function doPurchase() internal {
+    uint256 tokenToBuy = msg.value.mul(rate);
     token.transfer(msg.sender, tokenToBuy);
     wallet.transfer(msg.value);
-    return true;
-  }
-
-  function findUserFromWhiteList(address user) internal view returns (Registration storage) {
-    Registration storage registration = whiteList[user];
-    if(registration.isInWhiteList == true) {
-      return registration;
-    }
-
-    return whiteList[address(0)];
   }
 }

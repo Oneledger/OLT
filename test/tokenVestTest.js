@@ -7,15 +7,12 @@ require('chai')
   .use(require('chai-bignumber')(BigNumber))
   .should();
 
-contract('OneledgerToken', function([owner,vestingOwner, beneficiary]){
+contract('OneledgerToken Vesting', function([owner,vestingOwner, beneficiary]){
   let token = null;
   let vesting = null;
   const expectedTotalSupply = 100000000 * (10 ** 18);
   beforeEach(async ()=>{
     token = await OneledgerToken.new();
-    this.start = latestTime() + duration.minutes(1); // +1 minute so it starts after contract instantiation
-    this.cliff = duration.years(1);
-    this.duration = duration.years(2)
 
     vesting = await OneledgerTokenVesting.new(beneficiary, latestTime() + duration.weeks(2),
                                               duration.weeks(4), 10000, true,{from: vestingOwner});
@@ -46,5 +43,20 @@ contract('OneledgerToken', function([owner,vestingOwner, beneficiary]){
     await increaseTime(duration.weeks(5));
     await vesting.release(token.address).should.be.rejectedWith('revert');
     assert.equal( await token.balanceOf(vestingOwner), 22000);
-  })
+  });
+  it('should not be able to revoke if revocable if false ', async () => {
+    let vesting2 = await OneledgerTokenVesting.new(beneficiary, latestTime(),
+                                              duration.weeks(4), 10000, false,{from: vestingOwner});
+    await token.transfer(vesting2.address, 10000);
+    await increaseTime(duration.weeks(4) + duration.minutes(2));
+    await vesting2.revoke(token.address,{from: vestingOwner}).should.be.rejectedWith('revert');
+  });
+  it('should not be able to revoke if balance is 0 ', async () => {
+    let vesting2 = await OneledgerTokenVesting.new(beneficiary, latestTime(),
+                                              duration.weeks(4), 10000, true,{from: vestingOwner});
+    await token.transfer(vesting2.address, 10000);
+    await increaseTime(duration.weeks(4) + duration.minutes(2));
+    await vesting2.release(token.address);
+    await vesting2.revoke(token.address,{from: vestingOwner}).should.be.rejectedWith('revert');
+  });
 })

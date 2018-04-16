@@ -51,10 +51,26 @@ contract('ICO', function([tokenOwner, wallet, user, nonaddToWhiteListUser]) {
     await ico.sendTransaction({from: user, value: 200000000}).should.be.rejectedWith('revert');
     await increaseTime(duration.days(1) + duration.seconds(10));
     await ico.sendTransaction({from: user, value: 300000000}).should.be.fulfilled;
+    await ico.sendTransaction({from: user, value: 100000000}).should.be.rejectedWith('revert');//one day one purchase
+    await increaseTime(duration.days(1) + duration.seconds(10));
     await ico.sendTransaction({from: user, value: 100000000}).should.be.fulfilled;
     await ico.sendTransaction({from: nonaddToWhiteListUser, value: 200000000}).should.be.rejectedWith('revert');
 
     let eth_after = await web3.eth.getBalance(wallet);
     assert.equal(eth_after.minus(eth_before), 700000000);
+  });
+  it('should not allow to buy new token when ICO contract is closed', async () => {
+    await ico.addToWhiteList([user],100000000);
+    await ico.closeSale();
+    await ico.sendTransaction({from: user, value: 100000000}).should.be.rejectedWith('revert');
+  });
+  it('should not allow purchase when trying to buy too much token for the first day', async () => {
+    await ico.addToWhiteList([user],100000000);
+    await ico.sendTransaction({from: user, value: 1000000000}).should.be.rejectedWith('revert');
+  });
+  it('should not allow purchase when trying to buy too much token for the second day', async () => {
+    await ico.addToWhiteList([user],100000000);
+    await increaseTime(duration.days(1) + duration.seconds(10));
+    await ico.sendTransaction({from: user, value: 200000001}).should.be.rejectedWith('revert');
   });
 })
