@@ -30,8 +30,8 @@ contract ICO is Ownable {
 
   modifier validatePurchase() {
     require(whiteList[msg.sender].isInWhiteList);
-    require(now - whiteList[msg.sender].lastPurchasedTimestamp > 24 hours); //can only purchase once every 24 hours
-    uint256 timeFrame = now - initialTime;
+    require(now.sub(whiteList[msg.sender].lastPurchasedTimestamp) > 24 hours); // can only purchase once every 24 hours
+    uint256 timeFrame = now.sub(initialTime);
     if (timeFrame <= 24 hours) { // day 1
       require(msg.value <= whiteList[msg.sender].offeredWei);
     }else if(timeFrame <= 48 hours) { //day 2

@@ -61,7 +61,7 @@ contract OneledgerTokenVesting is Ownable {
      (amountToTransfer, numberOfPeriod)  = releasableAmount(token);
      require(amountToTransfer > 0);
      token.transfer(beneficiary, amountToTransfer);
-     numberOfReleased_ += numberOfPeriod;
+     numberOfReleased_ = numberOfReleased_.add(numberOfPeriod);
      emit Released(amountToTransfer);
    }
 
@@ -82,10 +82,10 @@ contract OneledgerTokenVesting is Ownable {
      *param token Oneledger token which is being vested
      */
      function releasableAmount(OneledgerToken token) public view returns (uint256, uint256) {
-       uint256 timeFrame = now - startFrom;
-       uint256 numberOfPeriod = timeFrame / period - numberOfReleased_;
+       uint256 timeFrame = now.sub(startFrom);
+       uint256 numberOfPeriod = timeFrame.div(period).sub(numberOfReleased_);
        uint256 availableBalance = token.balanceOf(this);
-       uint256 tokenReadyToRelease = numberOfPeriod * tokenReleasedPerPeriod;
+       uint256 tokenReadyToRelease = numberOfPeriod.mul(tokenReleasedPerPeriod);
        if (tokenReadyToRelease >= availableBalance) {
          return (availableBalance, numberOfPeriod);
        } else {
