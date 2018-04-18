@@ -30,9 +30,9 @@ contract OneledgerToken is StandardToken, Ownable {
   * @dev constructor
   */
   function OneledgerToken() public {
-      totalSupply_ = INITIAL_SUPPLY;
-      balances[msg.sender] = INITIAL_SUPPLY;
-      active = false;
+    totalSupply_ = INITIAL_SUPPLY;
+    balances[msg.sender] = INITIAL_SUPPLY;
+    active = false;
   }
 
 

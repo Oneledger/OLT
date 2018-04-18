@@ -34,7 +34,7 @@ contract ICO is Ownable {
     uint256 timeFrame = now.sub(initialTime);
     if (timeFrame <= 24 hours) { // day 1
       require(msg.value <= whiteList[msg.sender].offeredWei);
-    }else if(timeFrame <= 48 hours) { //day 2
+    } else if (timeFrame <= 48 hours) { //day 2
       require(msg.value <= whiteList[msg.sender].offeredWei.mul(2));
     }
     _;

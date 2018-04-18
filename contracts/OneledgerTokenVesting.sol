@@ -35,9 +35,7 @@ contract OneledgerTokenVesting is Ownable {
     uint256 _period,
     uint256 _tokenReleasedPerPeriod,
     bool _revocable
-  )
-    public
-  {
+  ) public {
     require(_beneficiary != address(0));
     require(_startFrom >= now);
 
@@ -81,15 +79,15 @@ contract OneledgerTokenVesting is Ownable {
      *@dev releasableAmount the amount that can be released
      *param token Oneledger token which is being vested
      */
-     function releasableAmount(OneledgerToken token) public view returns (uint256, uint256) {
-       uint256 timeFrame = now.sub(startFrom);
-       uint256 numberOfPeriod = timeFrame.div(period).sub(numberOfReleased_);
-       uint256 availableBalance = token.balanceOf(this);
-       uint256 tokenReadyToRelease = numberOfPeriod.mul(tokenReleasedPerPeriod);
-       if (tokenReadyToRelease >= availableBalance) {
-         return (availableBalance, numberOfPeriod);
-       } else {
-         return (tokenReadyToRelease, numberOfPeriod);
-       }
-     }
+    function releasableAmount(OneledgerToken token) public view returns (uint256, uint256) {
+      uint256 timeFrame = now.sub(startFrom);
+      uint256 numberOfPeriod = timeFrame.div(period).sub(numberOfReleased_);
+      uint256 availableBalance = token.balanceOf(this);
+      uint256 tokenReadyToRelease = numberOfPeriod.mul(tokenReleasedPerPeriod);
+      if (tokenReadyToRelease >= availableBalance) {
+        return (availableBalance, numberOfPeriod);
+      } else {
+        return (tokenReadyToRelease, numberOfPeriod);
+      }
+    }
 }
