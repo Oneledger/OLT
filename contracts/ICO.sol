@@ -81,16 +81,9 @@ contract ICO is Ownable {
    */
   function buyTokens() public payable validatePurchase {
     require(!saleClosed);
-    doPurchase();
-    whiteList[msg.sender].lastPurchasedTimestamp = now;
-  }
-
-  /**
-  *@dev do purchase
-  */
-  function doPurchase() internal {
     uint256 tokenToBuy = msg.value.mul(rate);
     token.transfer(msg.sender, tokenToBuy);
     wallet.transfer(msg.value);
+    whiteList[msg.sender].lastPurchasedTimestamp = now;
   }
 }
