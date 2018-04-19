@@ -23,11 +23,6 @@ contract ICO is Ownable {
 
   event PurchaseToken(uint256 weiAmount, uint256 rate, uint256 token, address beneficiary);
 
-  modifier isNotClosed() {
-    require(!saleClosed);
-    _;
-  }
-
   modifier validatePurchase() {
     require(whiteList[msg.sender].isInWhiteList);
     require(now.sub(whiteList[msg.sender].lastPurchasedTimestamp) > 24 hours); // can only purchase once every 24 hours
@@ -84,7 +79,8 @@ contract ICO is Ownable {
   /**
    * @dev buy tokens
    */
-  function buyTokens() public payable isNotClosed validatePurchase {
+  function buyTokens() public payable validatePurchase {
+    require(!saleClosed);
     doPurchase();
     whiteList[msg.sender].lastPurchasedTimestamp = now;
   }
