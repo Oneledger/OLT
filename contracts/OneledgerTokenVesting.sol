@@ -44,7 +44,7 @@ contract OneledgerTokenVesting is Ownable {
     period = _period;
     tokenReleasedPerPeriod = _tokenReleasedPerPeriod;
     revocable = _revocable;
-    numberOfReleased_ =  0;
+    numberOfReleased_ = 0;
   }
 
   /**
@@ -52,7 +52,7 @@ contract OneledgerTokenVesting is Ownable {
    * param _token Oneledgertoken that will be released to beneficiary
    */
   function release(OneledgerToken token) public {
-    require(token.balanceOf(this) >=0 && now >= startFrom);
+    require(token.balanceOf(this) >= 0 && now >= startFrom);
     uint256 amountToTransfer;
     uint256 numberOfPeriod;
     (amountToTransfer, numberOfPeriod) = releasableAmount(token);
