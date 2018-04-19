@@ -11,7 +11,6 @@ import "zeppelin-solidity/contracts/token/ERC20/StandardToken.sol";
 contract OneledgerToken is StandardToken, Ownable {
   using SafeMath for uint256;
 
-
   string public name = "Oneledger Token";
   string public symbol = "OLT";
   uint256 public decimals = 18;
@@ -34,8 +33,6 @@ contract OneledgerToken is StandardToken, Ownable {
     balances[msg.sender] = INITIAL_SUPPLY;
     active = false;
   }
-
-
 
   /**
   * @dev activate token transfers
