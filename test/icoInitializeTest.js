@@ -14,13 +14,16 @@ contract('ICO Initialize', function([tokenOwner, wallet, user, nonaddToWhiteList
     token = await OneledgerToken.new();
     await token.activate();
   });
-  it('should be failed if rate is negative', async () => {
-    await ICO.new(wallet,token.address, 0).should.be.rejectedWith('revert');
+
+  it('should fail if rate is negative', async () => {
+    await ICO.new(wallet, token.address, 0).should.be.rejectedWith('revert');
   });
-  it('should be failed if wallet address is 0', async () => {
-    await ICO.new(0,token.address, 10).should.be.rejectedWith('revert');
+
+  it('should fail if wallet address is 0', async () => {
+    await ICO.new(0, token.address, 10).should.be.rejectedWith('revert');
   });
-  it('should be failed if wallet address is 0', async () => {
-    await ICO.new(wallet,0, 10).should.be.rejectedWith('revert');
+
+  it('should fail if wallet address is 0', async () => {
+    await ICO.new(wallet, 0, 10).should.be.rejectedWith('revert');
   })
 })
