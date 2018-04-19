@@ -53,8 +53,6 @@ contract ICO is Ownable {
     rate = _rate;
     initialTime = now;
     saleClosed = false;
-
-    whiteList[address(0)] =  WhiteListRecord(false, 0 , 0); //A placeholder for buyer which is not in the whitelist
   }
 
   /**
