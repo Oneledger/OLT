@@ -8,14 +8,17 @@ require('chai')
   .should();
 
 contract('ICO', function([tokenOwner, wallet, user, nonaddToWhiteListUser]) {
-  let token = null
-  let ico  = null;
+
+  let token;
+  let ico;
+
   beforeEach(async ()=>{
     token = await OneledgerToken.new();
     ico = await ICO.new(wallet,token.address, 10);
     token.transfer(ico.address, 100000000000000); //ICO contract will hold the token and walletOwner will receive eth
     await token.activate();
   });
+
   it('should not be able to buy token, since user is not in the addToWhiteList', async () => {
     let eth_before = await web3.eth.getBalance(wallet);
     let eth_after = await web3.eth.getBalance(wallet);
