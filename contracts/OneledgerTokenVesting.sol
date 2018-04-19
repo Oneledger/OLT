@@ -17,7 +17,7 @@ contract OneledgerTokenVesting is Ownable {
   uint256 public period;
   uint256 public tokenReleasedPerPeriod;
 
-  uint256 private numberOfReleased_;
+  uint256 public elapsedPeriods;
 
   bool public revocable;
 
@@ -44,7 +44,7 @@ contract OneledgerTokenVesting is Ownable {
     period = _period;
     tokenReleasedPerPeriod = _tokenReleasedPerPeriod;
     revocable = _revocable;
-    numberOfReleased_ = 0;
+    elapsedPeriods = 0;
   }
 
   /**
@@ -54,11 +54,11 @@ contract OneledgerTokenVesting is Ownable {
   function release(OneledgerToken token) public {
     require(token.balanceOf(this) >= 0 && now >= startFrom);
     uint256 amountToTransfer;
-    uint256 numberOfPeriod;
-    (amountToTransfer, numberOfPeriod) = releasableAmount(token);
+    uint256 periodsInCurrentRelease;
+    (amountToTransfer, periodsInCurrentRelease) = releasableAmount(token);
     require(amountToTransfer > 0);
     token.transfer(beneficiary, amountToTransfer);
-    numberOfReleased_ = numberOfReleased_.add(numberOfPeriod);
+    elapsedPeriods = elapsedPeriods.add(periodsInCurrentRelease);
     emit Released(amountToTransfer);
   }
 
@@ -80,13 +80,13 @@ contract OneledgerTokenVesting is Ownable {
     */
    function releasableAmount(OneledgerToken token) public view returns (uint256, uint256) {
      uint256 elapsedTime = now.sub(startFrom);
-     uint256 numberOfPeriod = elapsedTime.div(period).sub(numberOfReleased_);
+     uint256 periodsInCurrentRelease = elapsedTime.div(period).sub(elapsedPeriods);
      uint256 availableBalance = token.balanceOf(this);
-     uint256 tokenReadyToRelease = numberOfPeriod.mul(tokenReleasedPerPeriod);
+     uint256 tokenReadyToRelease = periodsInCurrentRelease.mul(tokenReleasedPerPeriod);
      if (tokenReadyToRelease >= availableBalance) {
-       return (availableBalance, numberOfPeriod);
+       return (availableBalance, periodsInCurrentRelease);
      } else {
-       return (tokenReadyToRelease, numberOfPeriod);
+       return (tokenReadyToRelease, periodsInCurrentRelease);
      }
    }
 }
