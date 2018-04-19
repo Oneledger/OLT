@@ -48,46 +48,45 @@ contract OneledgerTokenVesting is Ownable {
   }
 
   /**
-   *@dev release
-   *param _token Oneledgertoken that will be released to beneficiary
+   * @dev release
+   * param _token Oneledgertoken that will be released to beneficiary
    */
-   function release(OneledgerToken token) public {
-     require(token.balanceOf(this) >=0
-              && now >= startFrom);
-     uint256 amountToTransfer;
-     uint256 numberOfPeriod;
-     (amountToTransfer, numberOfPeriod)  = releasableAmount(token);
-     require(amountToTransfer > 0);
-     token.transfer(beneficiary, amountToTransfer);
-     numberOfReleased_ = numberOfReleased_.add(numberOfPeriod);
-     emit Released(amountToTransfer);
-   }
+  function release(OneledgerToken token) public {
+    require(token.balanceOf(this) >=0 && now >= startFrom);
+    uint256 amountToTransfer;
+    uint256 numberOfPeriod;
+    (amountToTransfer, numberOfPeriod)  = releasableAmount(token);
+    require(amountToTransfer > 0);
+    token.transfer(beneficiary, amountToTransfer);
+    numberOfReleased_ = numberOfReleased_.add(numberOfPeriod);
+    emit Released(amountToTransfer);
+  }
 
    /**
     *@dev revoke Allows the owner to revoke the token that hasn't been transferred
     *param _token Onelegertoken
     */
-    function revoke(OneledgerToken token) public onlyOwner {
-      require(revocable);
-      uint256 availableBalance = token.balanceOf(this);
-      require(availableBalance > 0);
-      token.transfer(owner, availableBalance);
-      emit Revoked();
-    }
+   function revoke(OneledgerToken token) public onlyOwner {
+     require(revocable);
+     uint256 availableBalance = token.balanceOf(this);
+     require(availableBalance > 0);
+     token.transfer(owner, availableBalance);
+     emit Revoked();
+   }
 
-    /**
-     *@dev releasableAmount the amount that can be released
-     *param token Oneledger token which is being vested
-     */
-    function releasableAmount(OneledgerToken token) public view returns (uint256, uint256) {
-      uint256 timeFrame = now.sub(startFrom);
-      uint256 numberOfPeriod = timeFrame.div(period).sub(numberOfReleased_);
-      uint256 availableBalance = token.balanceOf(this);
-      uint256 tokenReadyToRelease = numberOfPeriod.mul(tokenReleasedPerPeriod);
-      if (tokenReadyToRelease >= availableBalance) {
-        return (availableBalance, numberOfPeriod);
-      } else {
-        return (tokenReadyToRelease, numberOfPeriod);
-      }
-    }
+   /**
+    * @dev releasableAmount the amount that can be released
+    * param token Oneledger token which is being vested
+    */
+   function releasableAmount(OneledgerToken token) public view returns (uint256, uint256) {
+     uint256 timeFrame = now.sub(startFrom);
+     uint256 numberOfPeriod = timeFrame.div(period).sub(numberOfReleased_);
+     uint256 availableBalance = token.balanceOf(this);
+     uint256 tokenReadyToRelease = numberOfPeriod.mul(tokenReleasedPerPeriod);
+     if (tokenReadyToRelease >= availableBalance) {
+       return (availableBalance, numberOfPeriod);
+     } else {
+       return (tokenReadyToRelease, numberOfPeriod);
+     }
+   }
 }

@@ -72,7 +72,7 @@ contract ICO is Ownable {
   /**
    * @dev fallback function ***DO NOT OVERRIDE***
    */
-  function () external payable {
+  function() external payable {
     buyTokens();
   }
 

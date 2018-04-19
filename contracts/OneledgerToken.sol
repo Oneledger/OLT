@@ -18,16 +18,16 @@ contract OneledgerToken is StandardToken, Ownable {
   bool public active;
 
   /**
-  * @dev restrict function to be callable by the owner or when token is active
-  */
+   * @dev restrict function to be callable by the owner or when token is active
+   */
   modifier onlyActiveOrOwner() {
     require(msg.sender == owner || active == true); // owner can call even when inactive
     _;
   }
 
   /**
-  * @dev constructor
-  */
+   * @dev constructor
+   */
   function OneledgerToken() public {
     totalSupply_ = INITIAL_SUPPLY;
     balances[msg.sender] = INITIAL_SUPPLY;
@@ -35,22 +35,22 @@ contract OneledgerToken is StandardToken, Ownable {
   }
 
   /**
-  * @dev activate token transfers
-  */
+   * @dev activate token transfers
+   */
   function activate() public onlyOwner {
     active = true;
   }
 
   /**
-  * @dev transfer  ERC20 standard transfer wrapped with onlyActiveOrOwner
-  */
+   * @dev transfer  ERC20 standard transfer wrapped with onlyActiveOrOwner
+   */
   function transfer(address to, uint256 value) public onlyActiveOrOwner  returns (bool) {
     return super.transfer(to, value);
   }
 
   /**
-  * @dev transfer  ERC20 standard transferFrom wrapped with onlyActiveOrOwner
-  */
+   * @dev transfer  ERC20 standard transferFrom wrapped with onlyActiveOrOwner
+   */
   function transferFrom(address from, address to, uint256 value) public onlyActiveOrOwner returns (bool) {
     return super.transferFrom(from, to, value);
   }
