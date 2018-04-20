@@ -23,21 +23,16 @@ contract ICO is Ownable {
 
   event PurchaseToken(uint256 weiAmount, uint256 rate, uint256 token, address beneficiary);
 
-  modifier isNotClosed() {
+  function validatePurchase() {
     require(!saleClosed);
-    _;
-  }
-
-  modifier validatePurchase() {
     require(whiteList[msg.sender].isInWhiteList);
-    require(now - whiteList[msg.sender].lastPurchasedTimestamp > 24 hours); //can only purchase once every 24 hours
-    uint256 timeFrame = now - initialTime;
-    if (timeFrame <= 24 hours) { // day 1
-      require(msg.value <= whiteList[msg.sender].offeredWei);
-    }else if(timeFrame <= 48 hours) { //day 2
-      require(msg.value <= whiteList[msg.sender].offeredWei.mul(2));
-    }
-    _;
+    // can only purchase once every 24 hours
+    require(now.sub(whiteList[msg.sender].lastPurchasedTimestamp) > 24 hours);
+    uint256 elapsedTime = now.sub(initialTime);
+    // check day 1 buy limit
+    require(elapsedTime > 24 hours || msg.value <= whiteList[msg.sender].offeredWei);
+    // check day 2 buy limit
+    require(elapsedTime > 48 hours || msg.value <= whiteList[msg.sender].offeredWei.mul(2));
   }
 
   /**
@@ -53,8 +48,6 @@ contract ICO is Ownable {
     rate = _rate;
     initialTime = now;
     saleClosed = false;
-
-    whiteList[address(0)] =  WhiteListRecord(false, 0 , 0); //A placeholder for buyer which is not in the whitelist
   }
 
   /**
@@ -70,8 +63,8 @@ contract ICO is Ownable {
   }
 
   /**
-  * @dev close the ICO
-  */
+   * @dev close the ICO
+   */
   function closeSale() public onlyOwner {
     saleClosed = true;
   }
@@ -79,24 +72,18 @@ contract ICO is Ownable {
   /**
    * @dev fallback function ***DO NOT OVERRIDE***
    */
-  function () external payable {
+  function() external payable {
     buyTokens();
   }
 
   /**
    * @dev buy tokens
    */
-  function buyTokens() public payable isNotClosed validatePurchase {
-    doPurchase();
-    whiteList[msg.sender].lastPurchasedTimestamp = now;
-  }
-
-  /**
-  *@dev do purchase
-  */
-  function doPurchase() internal {
+  function buyTokens() public payable {
+    validatePurchase();
     uint256 tokenToBuy = msg.value.mul(rate);
     token.transfer(msg.sender, tokenToBuy);
     wallet.transfer(msg.value);
+    whiteList[msg.sender].lastPurchasedTimestamp = now;
   }
 }

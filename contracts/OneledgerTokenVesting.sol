@@ -1,9 +1,10 @@
 pragma solidity 0.4.21;
+
 import "./OneledgerToken.sol";
 import "zeppelin-solidity/contracts/math/SafeMath.sol";
 import "zeppelin-solidity/contracts/ownership/Ownable.sol";
 
-contract OneledgerTokenVesting is Ownable{
+contract OneledgerTokenVesting is Ownable {
   using SafeMath for uint256;
 
   event Released(uint256 amount);
@@ -16,7 +17,7 @@ contract OneledgerTokenVesting is Ownable{
   uint256 public period;
   uint256 public tokenReleasedPerPeriod;
 
-  uint256 private numberOfReleased_;
+  uint256 public elapsedPeriods;
 
   bool public revocable;
 
@@ -34,9 +35,7 @@ contract OneledgerTokenVesting is Ownable{
     uint256 _period,
     uint256 _tokenReleasedPerPeriod,
     bool _revocable
-  )
-    public
-  {
+  ) public {
     require(_beneficiary != address(0));
     require(_startFrom >= now);
 
@@ -45,50 +44,49 @@ contract OneledgerTokenVesting is Ownable{
     period = _period;
     tokenReleasedPerPeriod = _tokenReleasedPerPeriod;
     revocable = _revocable;
-    numberOfReleased_ =  0;
+    elapsedPeriods = 0;
   }
 
   /**
-   *@dev release
-   *param _token Oneledgertoken that will be released to beneficiary
+   * @dev release
+   * param _token Oneledgertoken that will be released to beneficiary
    */
-   function release(OneledgerToken token) public {
-     require(token.balanceOf(this) >=0
-              && now >= startFrom);
-     uint256 amountToTransfer;
-     uint256 numberOfPeriod;
-     (amountToTransfer, numberOfPeriod)  = releasableAmount(token);
-     require(amountToTransfer > 0);
-     token.transfer(beneficiary, amountToTransfer);
-     numberOfReleased_ += numberOfPeriod;
-     emit Released(amountToTransfer);
-   }
+  function release(OneledgerToken token) public {
+    require(token.balanceOf(this) >= 0 && now >= startFrom);
+    uint256 amountToTransfer;
+    uint256 periodsInCurrentRelease;
+    (amountToTransfer, periodsInCurrentRelease) = releasableAmount(token);
+    require(amountToTransfer > 0);
+    token.transfer(beneficiary, amountToTransfer);
+    elapsedPeriods = elapsedPeriods.add(periodsInCurrentRelease);
+    emit Released(amountToTransfer);
+  }
 
    /**
     *@dev revoke Allows the owner to revoke the token that hasn't been transferred
     *param _token Onelegertoken
     */
-    function revoke(OneledgerToken token) public onlyOwner {
-      require(revocable);
-      uint256 availableBalance = token.balanceOf(this);
-      require(availableBalance > 0);
-      token.transfer(owner, availableBalance);
-      emit Revoked();
-    }
+   function revoke(OneledgerToken token) public onlyOwner {
+     require(revocable);
+     uint256 availableBalance = token.balanceOf(this);
+     require(availableBalance > 0);
+     token.transfer(owner, availableBalance);
+     emit Revoked();
+   }
 
-    /**
-     *@dev releasableAmount the amount that can be released
-     *param token Oneledger token which is being vested
-     */
-     function releasableAmount(OneledgerToken token) public view returns (uint256, uint256) {
-       uint256 timeFrame = now - startFrom;
-       uint256 numberOfPeriod = timeFrame / period - numberOfReleased_;
-       uint256 availableBalance = token.balanceOf(this);
-       uint256 tokenReadyToRelease = numberOfPeriod * tokenReleasedPerPeriod;
-       if (tokenReadyToRelease >= availableBalance) {
-         return (availableBalance, numberOfPeriod);
-       } else {
-         return (tokenReadyToRelease, numberOfPeriod);
-       }
+   /**
+    * @dev releasableAmount the amount that can be released
+    * param token Oneledger token which is being vested
+    */
+   function releasableAmount(OneledgerToken token) public view returns (uint256, uint256) {
+     uint256 elapsedTime = now.sub(startFrom);
+     uint256 periodsInCurrentRelease = elapsedTime.div(period).sub(elapsedPeriods);
+     uint256 availableBalance = token.balanceOf(this);
+     uint256 tokenReadyToRelease = periodsInCurrentRelease.mul(tokenReleasedPerPeriod);
+     if (tokenReadyToRelease >= availableBalance) {
+       return (availableBalance, periodsInCurrentRelease);
+     } else {
+       return (tokenReadyToRelease, periodsInCurrentRelease);
      }
+   }
 }
