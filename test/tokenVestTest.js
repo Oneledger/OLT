@@ -36,25 +36,4 @@ contract('OneledgerToken Vesting', function([owner,vestingOwner, beneficiary]){
     await vesting.release(token.address).should.be.rejectedWith('revert');
     assert.equal( await token.balanceOf(beneficiary), 20000);
   });
-  it('should be able to be revoked by the owner' ,async () => {
-    await increaseTime(duration.weeks(2) + duration.weeks(4) * 2 + duration.days(2));
-    await vesting.release(token.address);
-    vesting.revoke(token.address,{from : vestingOwner});
-    await increaseTime(duration.weeks(5));
-    await vesting.release(token.address).should.be.rejectedWith('revert');
-    assert.equal( await token.balanceOf(vestingOwner), 22000);
-  });
-  it('should not be able to revoke if revocable is false ', async () => {
-    let vesting2 = await OneledgerTokenVesting.new(beneficiary, latestTime()+duration.minutes(10),
-                                              duration.weeks(4), 10000, false,{from: vestingOwner});
-    await vesting2.revoke(token.address,{from: vestingOwner}).should.be.rejectedWith('revert');
-  });
-  it('should not be able to revoke if balance is 0 ', async () => {
-    let vesting2 = await OneledgerTokenVesting.new(beneficiary, latestTime(),
-                                              duration.weeks(4), 10000, true,{from: vestingOwner});
-    await token.transfer(vesting2.address, 10000);
-    await increaseTime(duration.weeks(4) + duration.minutes(2));
-    await vesting2.release(token.address);
-    await vesting2.revoke(token.address,{from: vestingOwner}).should.be.rejectedWith('revert');
-  });
 })

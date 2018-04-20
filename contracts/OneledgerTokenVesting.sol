@@ -63,18 +63,6 @@ contract OneledgerTokenVesting is Ownable {
   }
 
    /**
-    *@dev revoke Allows the owner to revoke the token that hasn't been transferred
-    *param _token Onelegertoken
-    */
-   function revoke(OneledgerToken token) public onlyOwner {
-     require(revocable);
-     uint256 availableBalance = token.balanceOf(this);
-     require(availableBalance > 0);
-     token.transfer(owner, availableBalance);
-     emit Revoked();
-   }
-
-   /**
     * @dev releasableAmount the amount that can be released
     * param token Oneledger token which is being vested
     */
