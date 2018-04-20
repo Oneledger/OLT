@@ -14,7 +14,7 @@ contract('ICO', function([tokenOwner, wallet, user, nonaddToWhiteListUser]) {
 
   beforeEach(async ()=>{
     token = await OneledgerToken.new();
-    ico = await ICO.new(wallet,token.address, 10);
+    ico = await ICO.new(wallet,token.address, 10,latestTime());
     token.transfer(ico.address, 100000000000000); //ICO contract will hold the token and walletOwner will receive eth
     await token.activate();
   });
@@ -75,5 +75,18 @@ contract('ICO', function([tokenOwner, wallet, user, nonaddToWhiteListUser]) {
     await ico.addToWhiteList([user],100000000);
     await increaseTime(duration.days(1) + duration.seconds(10));
     await ico.sendTransaction({from: user, value: 200000001}).should.be.rejectedWith('revert');
+  });
+  it('should reject any purchase if starting date is later than purchase date', async()=>{
+    let ico2 = await ICO.new(wallet,token.address, 10,latestTime()+ duration.days(7));
+    token.transfer(ico2.address, 100000000000000); //ICO contract will hold the token and walletOwner will receive eth
+    await ico2.addToWhiteList([user],100000000);
+    await ico2.sendTransaction({from: user, value: 100}).should.be.rejectedWith('revert');
+  });
+  it('should allow purchase if starting date is ealier than purchase date', async()=>{
+    let ico2 = await ICO.new(wallet,token.address, 10,latestTime()+ duration.days(7));
+    token.transfer(ico2.address, 100000000000000); //ICO contract will hold the token and walletOwner will receive eth
+    await ico2.addToWhiteList([user],100000000);
+    await increaseTime(duration.days(7) + duration.seconds(10));
+    await ico2.sendTransaction({from: user, value: 100}).should.be.fulfilled;
   });
 })

@@ -25,6 +25,7 @@ contract ICO is Ownable {
 
   function validatePurchase() {
     require(!saleClosed);
+    require(initialTime <= now);
     require(whiteList[msg.sender].isInWhiteList);
     // can only purchase once every 24 hours
     require(now.sub(whiteList[msg.sender].lastPurchasedTimestamp) > 24 hours);
@@ -38,7 +39,7 @@ contract ICO is Ownable {
   /**
   * @dev constructor
   */
-  function ICO(address _wallet, ERC20 _token, uint256 _rate) public {
+  function ICO(address _wallet, ERC20 _token, uint256 _rate, uint _startDate) public {
     require(_rate > 0);
     require(_wallet != address(0));
     require(_token != address(0));
@@ -46,7 +47,7 @@ contract ICO is Ownable {
     wallet = _wallet;
     token = _token;
     rate = _rate;
-    initialTime = now;
+    initialTime = _startDate;
     saleClosed = false;
   }
 

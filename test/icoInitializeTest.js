@@ -16,14 +16,14 @@ contract('ICO Initialize', function([tokenOwner, wallet, user, nonaddToWhiteList
   });
 
   it('should fail if rate is negative', async () => {
-    await ICO.new(wallet, token.address, 0).should.be.rejectedWith('revert');
+    await ICO.new(wallet, token.address, 0,latestTime()).should.be.rejectedWith('revert');
   });
 
   it('should fail if wallet address is 0', async () => {
-    await ICO.new(0, token.address, 10).should.be.rejectedWith('revert');
+    await ICO.new(0, token.address, 10, latestTime()).should.be.rejectedWith('revert');
   });
 
   it('should fail if wallet address is 0', async () => {
-    await ICO.new(wallet, 0, 10).should.be.rejectedWith('revert');
+    await ICO.new(wallet, 0, 10,latestTime()).should.be.rejectedWith('revert');
   })
 })
