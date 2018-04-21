@@ -7,14 +7,14 @@ require('chai')
   .use(require('chai-bignumber')(BigNumber))
   .should();
 
-contract('ICO', function([tokenOwner, wallet, user, nonaddToWhiteListUser]) {
+contract('ICO', function([tokenOwner, wallet, user, nonaddToWhiteListUser,otherUser]) {
 
   let token;
   let ico;
 
   beforeEach(async ()=>{
     ico = await ICO.new(wallet,10,latestTime(), 100000000000000);
-    token = await ico.token();
+    token = OneledgerToken.at(await ico.token());
   });
 
   it('should not be able to buy token, since user is not in the addToWhiteList', async () => {
@@ -83,5 +83,18 @@ contract('ICO', function([tokenOwner, wallet, user, nonaddToWhiteListUser]) {
     await ico2.addToWhiteList([user],100000000);
     await increaseTime(duration.days(7) + duration.seconds(10));
     await ico2.sendTransaction({from: user, value: 100}).should.be.fulfilled;
+  });
+  it('should not allowed user to transfer token during ICO sales period', async () => {
+    await ico.addToWhiteList([user],100000000);
+    await ico.sendTransaction({from: user, value: 100000000});
+    await token.transfer(otherUser, 1000, {from: user}).should.be.rejectedWith('revert');
+  });
+  it('should allowed user to transfer token after ICO sales period', async () => {
+    await ico.addToWhiteList([user],100000000);
+    await ico.sendTransaction({from: user, value: 100000000});
+    await ico.closeSale();
+    let activated = await token.active();
+    assert.equal(activated, true);
+    await token.transfer(otherUser, 1000, {from: user}).should.be.fulfilled;
   });
 })
