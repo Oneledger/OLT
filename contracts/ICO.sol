@@ -70,9 +70,10 @@ contract ICO is Ownable {
   /**
    * @dev close the ICO
    */
-  function closeSale() public onlyOwner {
+  function closeSale(address newOwner) public onlyOwner {
     saleClosed = true;
     token.activate();
+    token.transferOwnership(newOwner);
   }
 
   /**

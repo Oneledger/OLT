@@ -7,7 +7,7 @@ require('chai')
   .use(require('chai-bignumber')(BigNumber))
   .should();
 
-contract('ICO', function([tokenOwner, wallet, user, nonaddToWhiteListUser,otherUser]) {
+contract('ICO', function([tokenOwner, wallet, user, nonaddToWhiteListUser,otherUser,newOwner]) {
 
   let token;
   let ico;
@@ -62,7 +62,7 @@ contract('ICO', function([tokenOwner, wallet, user, nonaddToWhiteListUser,otherU
   });
   it('should not allow to buy new token when ICO contract is closed', async () => {
     await ico.addToWhiteList([user],100000000);
-    await ico.closeSale();
+    await ico.closeSale(newOwner);
     await ico.sendTransaction({from: user, value: 100000000}).should.be.rejectedWith('revert');
   });
   it('should not allow purchase when trying to buy too much token for the first day', async () => {
@@ -92,7 +92,7 @@ contract('ICO', function([tokenOwner, wallet, user, nonaddToWhiteListUser,otherU
   it('should allowed user to transfer token after ICO sales period', async () => {
     await ico.addToWhiteList([user],100000000);
     await ico.sendTransaction({from: user, value: 100000000});
-    await ico.closeSale();
+    await ico.closeSale(newOwner);
     let activated = await token.active();
     assert.equal(activated, true);
     await token.transfer(otherUser, 1000, {from: user}).should.be.fulfilled;
