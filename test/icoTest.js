@@ -98,6 +98,20 @@ contract('ICO', function([tokenOwner, wallet, user, nonaddToWhiteListUser,otherU
     await token.transfer(otherUser, 1000, {from: user}).should.be.fulfilled;
   });
   it('should transfer the left balance to the new owner after saleClosed', async () => {
+    await ico.addToWhiteList([user],100000000);
+    await ico.sendTransaction({from: user, value: 10000000});
+    await ico.closeSale(newOwner);
+    let result = await token.balanceOf(newOwner);
+    assert.equal(result.toString(), new BigNumber(100000000 * (10 ** 18)).sub(10000000 * 10).toString());
+  });
+  it('should have total token supply equal to weiCap * rate before sale close' ,async () => {
+    let result = await token.totalSupply();
+    assert.equal(result.toString(), new BigNumber(100000000000000 * 10).toString());
+  });
+  it('should have reach total token supply after sale close' ,async () => {
+    await ico.closeSale(newOwner);
+    let result = await token.totalSupply();
+    assert.equal(result.toString(), new BigNumber(100000000 * (10 ** 18)).toString());
 
   });
 })

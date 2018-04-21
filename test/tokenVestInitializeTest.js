@@ -11,6 +11,7 @@ contract('Token Vest Initialize', function([tokenOwner, user]) {
   let token = null
   beforeEach(async ()=>{
     token = await OneledgerToken.new();
+    await token.mint(tokenOwner, 100000000 * (10 ** 18));
     await token.activate();
   });
   it('should be failed if beneficiary address is 0', async () => {

@@ -8,11 +8,9 @@ require('chai')
   .should();
 
 contract('ICO Initialize', function([tokenOwner, wallet, user, nonaddToWhiteListUser]) {
-  let token = null
   let ico  = null;
   beforeEach(async ()=>{
-    token = await OneledgerToken.new();
-    await token.activate();
+    
   });
 
   it('should fail if rate is negative', async () => {

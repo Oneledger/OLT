@@ -8,7 +8,8 @@ require('chai')
 contract('OneledgerTokenWithActive', ([owner,spender,user1,user2])=>{
   let token = null
   beforeEach(async ()=>{
-    token = await OneledgerToken.new()
+    token = await OneledgerToken.new();
+    await token.mint(owner, 100000000 * (10 ** 18));
   });
   it('should allow owner to transfer the token when contract first created (by default locked)', async ()=>{
     await token.transfer(user1, 1000,{from: owner}).should.be.fulfilled;

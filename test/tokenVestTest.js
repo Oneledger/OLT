@@ -13,6 +13,7 @@ contract('OneledgerToken Vesting', function([owner,vestingOwner, beneficiary]){
   const expectedTotalSupply = 100000000 * (10 ** 18);
   beforeEach(async ()=>{
     token = await OneledgerToken.new();
+    await token.mint(owner, 100000000 * (10 ** 18));
 
     vesting = await OneledgerTokenVesting.new(beneficiary, latestTime() + duration.weeks(2),
                                               duration.weeks(4), 10000, true,{from: vestingOwner});

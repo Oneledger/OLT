@@ -1,20 +1,18 @@
 pragma solidity 0.4.21;
 
 import "zeppelin-solidity/contracts/math/SafeMath.sol";
-import "zeppelin-solidity/contracts/ownership/Ownable.sol";
-import "zeppelin-solidity/contracts/token/ERC20/StandardToken.sol";
+import "zeppelin-solidity/contracts/token/ERC20/MintableToken.sol";
 
 /**
 * @title OneledgerToken
 * @dev this is the oneledger token
 */
-contract OneledgerToken is StandardToken, Ownable {
+contract OneledgerToken is MintableToken {
   using SafeMath for uint256;
 
   string public name = "Oneledger Token";
   string public symbol = "OLT";
   uint256 public decimals = 18;
-  uint256 public INITIAL_SUPPLY = 100000000 * (10 ** decimals);
   bool public active;
 
   /**
@@ -27,10 +25,9 @@ contract OneledgerToken is StandardToken, Ownable {
 
   /**
    * @dev constructor
+   * param initial_supply not include decimals
    */
   function OneledgerToken() public {
-    totalSupply_ = INITIAL_SUPPLY;
-    balances[msg.sender] = INITIAL_SUPPLY;
     active = false;
   }
 
