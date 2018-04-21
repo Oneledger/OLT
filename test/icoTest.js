@@ -97,4 +97,7 @@ contract('ICO', function([tokenOwner, wallet, user, nonaddToWhiteListUser,otherU
     assert.equal(activated, true);
     await token.transfer(otherUser, 1000, {from: user}).should.be.fulfilled;
   });
+  it('should transfer the left balance to the new owner after saleClosed', async () => {
+
+  });
 })

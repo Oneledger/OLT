@@ -72,7 +72,11 @@ contract ICO is Ownable {
    */
   function closeSale(address newOwner) public onlyOwner {
     saleClosed = true;
+    uint256 balanceLeft = token.balanceOf(this);
     token.activate();
+    if (balanceLeft > 0) {
+        token.transfer(newOwner, balanceLeft);
+    }
     token.transferOwnership(newOwner);
   }
 
