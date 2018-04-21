@@ -14,19 +14,22 @@ contract ICO is Ownable {
     uint256 lastPurchasedTimestamp;
   }
 
-  ERC20 public token;
+  OneledgerToken public token;
   address public wallet; // Address where funds are collected
   uint256 public rate;   // How many token units a buyer gets per eth
   mapping(address => WhiteListRecord) whiteList;
   uint256 initialTime;
   bool saleClosed;
+  uint256 public weiCap;
+  uint256 public weiRaised;
 
   event PurchaseToken(uint256 weiAmount, uint256 rate, uint256 token, address beneficiary);
 
-  function validatePurchase() {
+  function validatePurchase(uint256 weiPaid) {
     require(!saleClosed);
     require(initialTime <= now);
     require(whiteList[msg.sender].isInWhiteList);
+    require(weiPaid <= weiCap -  weiRaised);
     // can only purchase once every 24 hours
     require(now.sub(whiteList[msg.sender].lastPurchasedTimestamp) > 24 hours);
     uint256 elapsedTime = now.sub(initialTime);
@@ -39,16 +42,17 @@ contract ICO is Ownable {
   /**
   * @dev constructor
   */
-  function ICO(address _wallet, ERC20 _token, uint256 _rate, uint _startDate) public {
+  function ICO(address _wallet, uint256 _rate, uint256 _startDate, uint256 _weiCap) public {
     require(_rate > 0);
     require(_wallet != address(0));
-    require(_token != address(0));
 
     wallet = _wallet;
-    token = _token;
+    token = new OneledgerToken();
     rate = _rate;
     initialTime = _startDate;
     saleClosed = false;
+    weiCap = _weiCap;
+    weiRaised = 0;
   }
 
   /**
@@ -68,6 +72,7 @@ contract ICO is Ownable {
    */
   function closeSale() public onlyOwner {
     saleClosed = true;
+    token.activate();
   }
 
   /**
@@ -81,10 +86,11 @@ contract ICO is Ownable {
    * @dev buy tokens
    */
   function buyTokens() public payable {
-    validatePurchase();
+    validatePurchase(msg.value);
     uint256 tokenToBuy = msg.value.mul(rate);
     token.transfer(msg.sender, tokenToBuy);
     wallet.transfer(msg.value);
     whiteList[msg.sender].lastPurchasedTimestamp = now;
+    weiRaised = weiRaised.add(msg.value);
   }
 }
