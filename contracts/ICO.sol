@@ -89,6 +89,7 @@ contract ICO is Ownable {
             token.transfer(newOwner, balanceLeft);
         }
         token.mint(newOwner, totalTokenSupply.sub(token.totalSupply()));
+        token.finishMinting();
         token.transferOwnership(newOwner);
     }
 
