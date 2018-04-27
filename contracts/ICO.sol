@@ -24,7 +24,7 @@ contract ICO is Ownable {
     uint256 public weiCap;
     uint256 public weiRaised;
 
-    uint256 public totalTokenSupply = 100000000 * (10 ** 18);
+    uint256 public totalTokenSupply = 1000000000 * (10 ** 18);
 
     event PurchaseToken(uint256 weiAmount, uint256 rate, uint256 token, address beneficiary);
 
