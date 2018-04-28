@@ -112,6 +112,18 @@ contract('ICO', function([tokenOwner, wallet, user, nonaddToWhiteListUser,otherU
     await ico.closeSale(newOwner);
     let result = await token.totalSupply();
     assert.equal(result.toString(), new BigNumber(1000000000 * (10 ** 18)).toString());
-
   });
+  it('should reject if all weiRased is exceed the weiCap', async () => {
+    await ico.addToWhiteList([user],80000000000000);
+    await ico.addToWhiteList([otherUser],80000000000000);
+    await ico.sendTransaction({from: user, value: 80000000000000}).should.be.fulfilled;
+    await ico.sendTransaction({from: otherUser, value: 80000000000000}).should.be.rejectedWith('revert');
+  });
+  it('should not transfer any token to new owner if tokens are sold out', async () => {
+    await ico.addToWhiteList([user],100000000000000);
+    await ico.sendTransaction({from: user, value: 100000000000000});
+    await ico.closeSale(newOwner);
+    let balanceLeft = await token.balanceOf(newOwner);
+    assert.equal(balanceLeft.toString(), new BigNumber(1000000000 * (10 ** 18)).sub(100000000000000 * 10).toString());
+  })
 })

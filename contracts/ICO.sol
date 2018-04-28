@@ -63,7 +63,7 @@ contract ICO is Ownable {
         weiRaised = weiRaised.add(msg.value);
         token.transfer(msg.sender, tokenToBuy);
         wallet.transfer(msg.value);
-        PurchaseToken(msg.value, rate, tokenToBuy, msg.sender);
+        emit PurchaseToken(msg.value, rate, tokenToBuy, msg.sender);
     }
 
     /**

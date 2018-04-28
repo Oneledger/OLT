@@ -37,4 +37,9 @@ contract('OneledgerToken Vesting', function([owner,vestingOwner, beneficiary]){
     await vesting.release(token.address).should.be.rejectedWith('revert');
     assert.equal( await token.balanceOf(beneficiary), 20000);
   });
+  it('should release the available balance if available balance is smaller than token ready to release', async () => {
+    await increaseTime(duration.weeks(2) + duration.weeks(4) * 5 + duration.days(2));
+    await vesting.release(token.address).should.be.fulfilled;
+    assert.equal( await token.balanceOf(beneficiary), 10000 * 4 + 2000);
+  })
 })

@@ -59,7 +59,7 @@ contract OneledgerTokenVesting is Ownable {
         require(amountToTransfer > 0);
         elapsedPeriods = elapsedPeriods.add(periodsInCurrentRelease);
         token.transfer(beneficiary, amountToTransfer);
-        Released(amountToTransfer);
+        emit Released(amountToTransfer);
     }
 
      /**
