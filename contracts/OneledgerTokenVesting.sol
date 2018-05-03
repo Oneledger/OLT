@@ -8,7 +8,7 @@ import "zeppelin-solidity/contracts/ownership/Ownable.sol";
 contract OneledgerTokenVesting is Ownable {
     using SafeMath for uint256;
 
-    event Released(uint256 amount);
+    event VestingReleased(uint256 amount);
 
     // beneficiary of tokens after they are released
     address public beneficiary;
@@ -19,22 +19,18 @@ contract OneledgerTokenVesting is Ownable {
 
     uint256 public elapsedPeriods;
 
-    bool public revocable;
-
     /**
      * @dev Creates a vesting contract for OneledgerToken
      * @param _beneficiary address of the beneficiary to whom vested tokens are transferred
      * @param _startFrom Datetime when the vesting will begin
      * @param _period The preiod to release the token
      * @param _tokenReleasedPerPeriod the token to release per period
-     * @param _revocable whether the vesting is revocable or not
      */
     function OneledgerTokenVesting(
         address _beneficiary,
         uint256 _startFrom,
         uint256 _period,
-        uint256 _tokenReleasedPerPeriod,
-        bool _revocable
+        uint256 _tokenReleasedPerPeriod
     ) public {
         require(_beneficiary != address(0));
         require(_startFrom >= now);
@@ -43,7 +39,6 @@ contract OneledgerTokenVesting is Ownable {
         startFrom = _startFrom;
         period = _period;
         tokenReleasedPerPeriod = _tokenReleasedPerPeriod;
-        revocable = _revocable;
         elapsedPeriods = 0;
     }
 
@@ -59,7 +54,7 @@ contract OneledgerTokenVesting is Ownable {
         require(amountToTransfer > 0);
         elapsedPeriods = elapsedPeriods.add(periodsInCurrentRelease);
         token.transfer(beneficiary, amountToTransfer);
-        emit Released(amountToTransfer);
+        emit VestingReleased(amountToTransfer);
     }
 
      /**

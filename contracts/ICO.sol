@@ -1,6 +1,7 @@
 pragma solidity 0.4.21;
 
 import "./OneledgerToken.sol";
+import "./OneledgerTokenVesting.sol";
 import "zeppelin-solidity/contracts/math/SafeMath.sol";
 import "zeppelin-solidity/contracts/ownership/Ownable.sol";
 import "zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
@@ -26,7 +27,7 @@ contract ICO is Ownable {
 
     uint256 public totalTokenSupply = 1000000000 * (10 ** 18);
 
-    event PurchaseToken(uint256 weiAmount, uint256 rate, uint256 token, address beneficiary);
+    event BuyTokens(uint256 weiAmount, uint256 rate, uint256 token, address beneficiary);
 
     /**
     * @dev constructor
@@ -34,6 +35,7 @@ contract ICO is Ownable {
     function ICO(address _wallet, uint256 _rate, uint256 _startDate, uint256 _weiCap) public {
         require(_rate > 0);
         require(_wallet != address(0));
+        require(_weiCap.mul(_rate) <= totalTokenSupply);
 
         wallet = _wallet;
         rate = _rate;
@@ -43,7 +45,6 @@ contract ICO is Ownable {
         weiRaised = 0;
 
         token = new OneledgerToken();
-        token.mint(this, _weiCap.mul(_rate));
     }
 
     /**
@@ -61,9 +62,9 @@ contract ICO is Ownable {
         uint256 tokenToBuy = msg.value.mul(rate);
         whiteList[msg.sender].lastPurchasedTimestamp = now;
         weiRaised = weiRaised.add(msg.value);
-        token.transfer(msg.sender, tokenToBuy);
+        token.mint(msg.sender, tokenToBuy);
         wallet.transfer(msg.value);
-        emit PurchaseToken(msg.value, rate, tokenToBuy, msg.sender);
+        emit BuyTokens(msg.value, rate, tokenToBuy, msg.sender);
     }
 
     /**
@@ -79,15 +80,20 @@ contract ICO is Ownable {
     }
 
     /**
+     * @dev mint token to vesting contract
+     * param OneledgerTokenVesting vesting contract
+     * param uint256 total token number to mint
+    */
+    function mintTokenForVesting(OneledgerTokenVesting vesting, uint256 tokenToMint) public onlyOwner {
+      token.mint(vesting, tokenToMint);
+    }
+
+    /**
      * @dev close the ICO
+      param newOwner new owner of the token contract
      */
     function closeSale(address newOwner) public onlyOwner {
         saleClosed = true;
-        uint256 balanceLeft = token.balanceOf(this);
-        token.activate();
-        if (balanceLeft > 0) {
-            token.transfer(newOwner, balanceLeft);
-        }
         token.mint(newOwner, totalTokenSupply.sub(token.totalSupply()));
         token.finishMinting();
         token.transferOwnership(newOwner);

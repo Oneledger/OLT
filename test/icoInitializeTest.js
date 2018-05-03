@@ -1,6 +1,7 @@
 var OneledgerToken = artifacts.require('./OneledgerToken.sol');
 var ICO = artifacts.require("ICO");
 const {increaseTime, latestTime, duration} = require('./timeIncrease')(web3);
+const {tokener,ether} = require('./tokener');
 const BigNumber = web3.BigNumber;
 require('chai')
   .use(require('chai-as-promised'))
@@ -10,7 +11,7 @@ require('chai')
 contract('ICO Initialize', function([tokenOwner, wallet, user, nonaddToWhiteListUser]) {
   let ico  = null;
   beforeEach(async ()=>{
-    
+
   });
 
   it('should fail if rate is negative', async () => {
@@ -19,5 +20,9 @@ contract('ICO Initialize', function([tokenOwner, wallet, user, nonaddToWhiteList
 
   it('should fail if wallet address is 0', async () => {
     await ICO.new(0, 10, latestTime(),100000000000000).should.be.rejectedWith('revert');
+  });
+
+  it('should fail if weiCap is too huge', async () => {
+    await ICO.new(wallet, 10, latestTime(),ether(100000001)).should.be.rejectedWith('revert');
   });
 })
