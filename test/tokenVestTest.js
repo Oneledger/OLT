@@ -16,7 +16,7 @@ contract('OneledgerToken Vesting', function([owner,vestingOwner, beneficiary]){
     await token.mint(owner, 100000000 * (10 ** 18));
 
     vesting = await OneledgerTokenVesting.new(beneficiary, latestTime() + duration.weeks(2),
-                                              duration.weeks(4), 10000, true,{from: vestingOwner});
+                                              duration.weeks(4), 10000,{from: vestingOwner});
 
     await token.activate();
     await token.transfer(vesting.address, 10000 * 4 + 2000);
