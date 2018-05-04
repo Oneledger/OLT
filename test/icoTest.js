@@ -23,7 +23,7 @@ contract('ICO', function([wallet, user, nonaddToWhiteListUser,otherUser,newOwner
 
   it('should be able to mint new token for vesting contract', async () => {
     let vesting = await OneledgerTokenVesting.new(beneficiary, latestTime(),duration.weeks(4), tokener(10));
-    await ico.mintTokenForVesting(vesting.address, tokener(120)).should.be.fulfilled;
+    await ico.mintTokenToNewAddress(vesting.address, tokener(120)).should.be.fulfilled;
   })
 
   it('should not be able to buy token, since user is not in the addToWhiteList', async () => {

@@ -17,7 +17,7 @@ contract OneledgerToken is MintableToken {
     bool public active;
 
     /**
-     * @dev restrict function to be callable by the owner or when token is active
+     * @dev restrict function to be callable when token is active
      */
     modifier isActived() {
         require(active == true); // owner can call even when inactive

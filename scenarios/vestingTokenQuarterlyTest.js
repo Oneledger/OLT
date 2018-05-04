@@ -22,11 +22,11 @@ require('chai')
       ico = await ICO.new(wallet,ratePerWei,latestTime(), weiCap);
       token = await OneledgerToken.at(await ico.token());
       totalToken = tokener(12000000);
-      let starting = latestTime()
+      let starting = latestTime() + duration.minutes(10);
       let cycle = 4;
       let frequency = duration.weeks(13);
       vesting = await OneledgerTokenVesting.new(advisor1, starting,frequency, totalToken/cycle);
-      await ico.mintTokenForVesting(vesting.address, totalToken);
+      await ico.mintTokenToNewAddress(vesting.address, totalToken);
       await ico.closeSale(newOwner);
       await token.activate({from:newOwner});
     });
