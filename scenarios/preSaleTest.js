@@ -28,7 +28,7 @@ require('chai')
     });
     it('should be able to allow deploy the vesting contract', async () => {
       let totalToken = 1933701 * (10**18);
-      await OneledgerTokenVesting.new(advisor, latestTime(),
+      await OneledgerTokenVesting.new(advisor, latestTime() + duration.minutes(10),
                                                 duration.weeks(4), totalToken/12).should.be.fulfilled;
     })
   })
