@@ -84,7 +84,7 @@ contract ICO is Ownable {
      * param OneledgerTokenVesting vesting contract
      * param uint256 total token number to mint
     */
-    function mintTokenToNewAddress(address target, uint256 tokenToMint) public onlyOwner {
+    function mintToken(address target, uint256 tokenToMint) public onlyOwner {
       token.mint(target, tokenToMint);
     }
 

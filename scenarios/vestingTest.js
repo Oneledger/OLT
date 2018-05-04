@@ -37,7 +37,7 @@ require('chai')
     it('should release the token in first month', async () => {
       let totalToken = tokener(1933701);
       let vesting = await OneledgerTokenVesting.new(advisor1, latestTime()+ duration.minutes(10),duration.weeks(4), totalToken/12);
-      await ico.mintTokenToNewAddress(vesting.address, totalToken);
+      await ico.mintToken(vesting.address, totalToken);
       await ico.closeSale(newOwner);
       await token.activate({from:newOwner});
       await increaseTime(duration.weeks(4)+duration.minutes(20));
@@ -49,7 +49,7 @@ require('chai')
     it('should release the token in first month', async () => {
       let totalToken = tokener(1933701);
       let vesting = await OneledgerTokenVesting.new(advisor1, latestTime()+ duration.minutes(10),duration.weeks(4), totalToken/12);
-      await ico.mintTokenToNewAddress(vesting.address, totalToken);
+      await ico.mintToken(vesting.address, totalToken);
       await ico.closeSale(newOwner);
       await token.activate({from:newOwner});
       await increaseTime(duration.weeks(8)+duration.minutes(20));
@@ -61,7 +61,7 @@ require('chai')
     it('should release the token in first month', async () => {
       let totalToken = tokener(1933701);
       let vesting = await OneledgerTokenVesting.new(advisor1, latestTime()+ duration.minutes(10),duration.weeks(4), totalToken/12);
-      await ico.mintTokenToNewAddress(vesting.address, totalToken);
+      await ico.mintToken(vesting.address, totalToken);
       await ico.closeSale(newOwner);
       await token.activate({from:newOwner});
       await increaseTime(duration.weeks(12)+duration.minutes(20));
@@ -82,6 +82,6 @@ require('chai')
       let cycle = 12;
       let frequency = duration.weeks(4);
       let vesting = await OneledgerTokenVesting.new(company, starting,frequency, totalToken/cycle);
-      await ico.mintTokenToNewAddress(vesting.address, totalToken).should.be.fulfilled;
+      await ico.mintToken(vesting.address, totalToken).should.be.fulfilled;
     })
   })

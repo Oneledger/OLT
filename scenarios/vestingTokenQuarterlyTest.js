@@ -26,7 +26,7 @@ require('chai')
       let cycle = 4;
       let frequency = duration.weeks(13);
       vesting = await OneledgerTokenVesting.new(advisor1, starting,frequency, totalToken/cycle);
-      await ico.mintTokenToNewAddress(vesting.address, totalToken);
+      await ico.mintToken(vesting.address, totalToken);
       await ico.closeSale(newOwner);
       await token.activate({from:newOwner});
     });
