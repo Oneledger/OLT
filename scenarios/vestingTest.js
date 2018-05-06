@@ -63,10 +63,11 @@ require('chai')
       await ico.mintToken(vesting.address, totalToken);
       await ico.closeSale();
       await token.activate();
-      await increaseTime(duration.weeks(12)+duration.minutes(20));
+      await increaseTime(duration.weeks(12) + duration.minutes(20));
       await vesting.release(token.address);
       assert.equal((await token.balanceOf(advisor1)).toNumber(), totalToken/4);
     })
+
     /**
       Deploy company reserve token vesting contract
         - 10000000 OLT to be vested
@@ -80,7 +81,7 @@ require('chai')
       let starting = latestTime() + duration.weeks(24);
       let cycle = 12;
       let frequency = duration.weeks(4);
-      let vesting = await OneledgerTokenVesting.new(company, starting,frequency, totalToken/cycle);
+      let vesting = await OneledgerTokenVesting.new(company, starting, frequency, totalToken / cycle);
       await ico.mintToken(vesting.address, totalToken).should.be.fulfilled;
     })
   })
