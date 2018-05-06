@@ -15,7 +15,7 @@ contract OneledgerTokenVesting is Ownable {
 
     uint256 public startFrom;
     uint256 public period;
-    uint256 public tokenReleasedPerPeriod;
+    uint256 public tokensReleasedPerPeriod;
 
     uint256 public elapsedPeriods;
 
@@ -24,13 +24,13 @@ contract OneledgerTokenVesting is Ownable {
      * @param _beneficiary address of the beneficiary to whom vested tokens are transferred
      * @param _startFrom Datetime when the vesting will begin
      * @param _period The preiod to release the token
-     * @param _tokenReleasedPerPeriod the token to release per period
+     * @param _tokensReleasedPerPeriod the token to release per period
      */
     function OneledgerTokenVesting(
         address _beneficiary,
         uint256 _startFrom,
         uint256 _period,
-        uint256 _tokenReleasedPerPeriod
+        uint256 _tokensReleasedPerPeriod
     ) public {
         require(_beneficiary != address(0));
         require(_startFrom >= now);
@@ -38,7 +38,7 @@ contract OneledgerTokenVesting is Ownable {
         beneficiary = _beneficiary;
         startFrom = _startFrom;
         period = _period;
-        tokenReleasedPerPeriod = _tokenReleasedPerPeriod;
+        tokensReleasedPerPeriod = _tokensReleasedPerPeriod;
         elapsedPeriods = 0;
     }
 
@@ -65,11 +65,11 @@ contract OneledgerTokenVesting is Ownable {
         uint256 elapsedTime = now.sub(startFrom);
         uint256 periodsInCurrentRelease = elapsedTime.div(period).sub(elapsedPeriods);
         uint256 availableBalance = token.balanceOf(this);
-        uint256 tokenReadyToRelease = periodsInCurrentRelease.mul(tokenReleasedPerPeriod);
-        if (tokenReadyToRelease >= availableBalance) {
+        uint256 tokensReadyToRelease = periodsInCurrentRelease.mul(tokensReleasedPerPeriod);
+        if (tokensReadyToRelease >= availableBalance) {
             return (availableBalance, periodsInCurrentRelease);
         } else {
-            return (tokenReadyToRelease, periodsInCurrentRelease);
+            return (tokensReadyToRelease, periodsInCurrentRelease);
         }
     }
 }
