@@ -16,7 +16,7 @@ require('chai')
   .use(require('chai-bignumber')(BigNumber))
   .should();
 
-contract('ICO Contract', function([owner, wallet]) {
+contract('ICO Contract -- deployment', function([owner, wallet]) {
   let ico  = null;
   beforeEach(async ()=>{
 

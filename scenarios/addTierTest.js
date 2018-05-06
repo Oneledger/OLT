@@ -14,7 +14,7 @@ require('chai')
   .should();
 
 
-contract('ICO contract', function([wallet, ...users]) {
+contract('ICO contract -- whitelisting tiers', function([wallet, ...users]) {
   let ico;
   beforeEach(async ()=>{
     let weiCap = 10000 * (10 ** 18);//covert eth to wei

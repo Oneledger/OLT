@@ -8,7 +8,7 @@ require('chai')
   .use(require('chai-as-promised'))
   .use(require('chai-bignumber')(BigNumber))
   .should();
-  contract('The vesting contract', function([owner, newOwner, wallet, advisor1, advisor2, company]) {
+  contract('Vesting contract -- monthly release', function([owner, newOwner, wallet, advisor1, advisor2, company]) {
 
     let token;
     let ico;
@@ -25,7 +25,7 @@ require('chai')
       let starting = latestTime() + duration.weeks(20);//give 4 weeks space so that vesting can happen at exactly 24 weeks
       let cycle = 12;
       let frequency = duration.weeks(4);
-      vesting = await OneledgerTokenVesting.new(company, starting,frequency, totalToken/cycle);
+      vesting = await OneledgerTokenVesting.new(company, starting, frequency, totalToken/cycle);
       await ico.mintToken(vesting.address, totalToken);
       await ico.closeSale(newOwner);
       await token.activate({from:newOwner});
@@ -37,6 +37,7 @@ require('chai')
       await vesting.release(token.address).should.be.fulfilled;
       assert.equal((await token.balanceOf(company)).toNumber(), totalToken/12);
     })
+
     //Release starting from the first 7 months
     it('should release the token in first 7 month', async () => {
       await increaseTime(duration.weeks(24) + duration.minutes(10));
@@ -46,6 +47,7 @@ require('chai')
       await vesting.release(token.address).should.be.fulfilled;
       assert.equal((await token.balanceOf(company)).toNumber(), totalToken/6);
     })
+
     //Release starting from the first 9 months
     it('should release the token in first 7 month', async () => {
       await increaseTime(duration.weeks(24) + duration.minutes(10));

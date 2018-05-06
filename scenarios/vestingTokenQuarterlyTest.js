@@ -8,7 +8,7 @@ require('chai')
   .use(require('chai-as-promised'))
   .use(require('chai-bignumber')(BigNumber))
   .should();
-  contract('The vesting contract', function([owner, newOwner, wallet, advisor1, advisor2, company]) {
+  contract('Vesting contract -- quarterly release', function([owner, newOwner, wallet, advisor1, advisor2, company]) {
 
     let token;
     let ico;
