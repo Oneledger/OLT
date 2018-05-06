@@ -163,5 +163,5 @@ contract('ICO', function([wallet, user, nonaddToWhiteListUser, otherUser, benefi
     await ico2.sendTransaction({from: user, value: web3.toWei(3)}).should.be.rejectedWith('revert');
     await ico2.sendTransaction({from: user, value: web3.toWei(2)}).should.be.fulfilled;
     await ico2.sendTransaction({from: user, value: web3.toWei(0.1)}).should.be.rejectedWith('revert');
-  })
+  });
 })

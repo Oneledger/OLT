@@ -17,13 +17,11 @@ require('chai')
   .should();
 
 contract('ICO Contract -- deployment', function([owner, wallet]) {
-  let ico  = null;
-  beforeEach(async ()=>{
 
-  });
   it("should be able to deployed success", async () => {
-    let weiCap = 10000 * (10 ** 18);//covert eth to wei
-    let ratePerWei = 9668; //convert to rate per wei
+    let weiCap = web3.toWei(10000); // covert eth to wei
+    let ratePerWei = 9668; // convert to rate per wei
     await ICO.new(wallet,ratePerWei,latestTime(), weiCap).should.be.fulfilled;
-  })
+  });
+
 })
