@@ -63,7 +63,7 @@ contract('ICO', function([wallet, user, nonaddToWhiteListUser, otherUser, newOwn
   });
 
   it('should be able to buy token when the user was added in the addToWhiteList, the second day buy double, the third day free for all', async () => {
-    await ico.addToWhiteList([user],web3.toWei(1));
+    await ico.addToWhiteList([user], web3.toWei(1));
     let eth_before = await web3.eth.getBalance(wallet);
     await increaseTime(duration.days(1) + duration.seconds(1));
     await ico.sendTransaction({from: user, value: web3.toWei(0.1)}).should.be.fulfilled;
@@ -73,17 +73,20 @@ contract('ICO', function([wallet, user, nonaddToWhiteListUser, otherUser, newOwn
     await ico.sendTransaction({from: user, value: web3.toWei(0.2)}).should.be.rejectedWith('revert');
     await increaseTime(duration.days(1) + duration.seconds(10));
     await ico.sendTransaction({from: user, value: web3.toWei(0.4)}).should.be.fulfilled;
-    await ico.sendTransaction({from: user, value: web3.toWei(0.3)}).should.be.rejectedWith('revert');//one day one purchase
+    await ico.sendTransaction({from: user, value: web3.toWei(0.3)}).should.be.rejectedWith('revert'); // one day one purchase
     await increaseTime(duration.days(1) + duration.seconds(10));
     await ico.sendTransaction({from: user, value: web3.toWei(0.1)}).should.be.fulfilled;
     await ico.sendTransaction({from: nonaddToWhiteListUser, value: web3.toWei(0.2)}).should.be.rejectedWith('revert');
+
+    let userBalance = await token.balanceOf(user);
+    userBalance.should.be.bignumber.equal(rate * web3.toWei(0.8));
 
     let eth_after = await web3.eth.getBalance(wallet);
     assert.equal(eth_after.minus(eth_before).toNumber(), web3.toWei(0.8));
   });
 
   it('should not allow to buy new token when ICO contract is closed', async () => {
-    await ico.addToWhiteList([user],web3.toWei(1));
+    await ico.addToWhiteList([user], web3.toWei(1));
     await ico.closeSale(newOwner);
     await ico.sendTransaction({from: user, value: web3.toWei(0.5)}).should.be.rejectedWith('revert');
   });
