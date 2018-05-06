@@ -2,10 +2,8 @@ pragma solidity 0.4.23;
 
 import "./OneledgerToken.sol";
 import "zeppelin-solidity/contracts/math/SafeMath.sol";
-import "zeppelin-solidity/contracts/ownership/Ownable.sol";
 
-
-contract OneledgerTokenVesting is Ownable {
+contract OneledgerTokenVesting {
     using SafeMath for uint256;
 
     event Released(uint256 amount);
