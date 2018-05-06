@@ -143,8 +143,8 @@ contract('ICO contract -- buyTokens', function([owner, wallet, user, userNotInWh
   it("should allow token to be able to transfer after close sale and token activate", async () => {
     await increaseTime(duration.days(11) + duration.minutes(1));
     await ico.sendTransaction({from: user, value: 2 * (10 ** 18)}).should.be.fulfilled;
-    await ico.closeSale(newOwner);
-    await token.activate({from: newOwner});
+    await ico.closeSale();
+    await token.activate();
     await token.transfer(userNotInWhiteList, 10 * (10 ** 18), {from: user}).should.be.fulfilled;
   })
 })

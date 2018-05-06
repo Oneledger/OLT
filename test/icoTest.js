@@ -8,7 +8,7 @@ require('chai')
   .use(require('chai-bignumber')(BigNumber))
   .should();
 
-contract('ICO', function([wallet, user, nonaddToWhiteListUser, otherUser, newOwner, beneficiary]) {
+contract('ICO', function([wallet, user, nonaddToWhiteListUser, otherUser, beneficiary]) {
 
   let ico;
   let token;
@@ -87,7 +87,7 @@ contract('ICO', function([wallet, user, nonaddToWhiteListUser, otherUser, newOwn
 
   it('should not allow to buy new token when ICO contract is closed', async () => {
     await ico.addToWhiteList([user], web3.toWei(1));
-    await ico.closeSale(newOwner);
+    await ico.closeSale();
     await ico.sendTransaction({from: user, value: web3.toWei(0.5)}).should.be.rejectedWith('revert');
   });
 
@@ -103,7 +103,7 @@ contract('ICO', function([wallet, user, nonaddToWhiteListUser, otherUser, newOwn
   });
 
   it('should reject any purchase if starting date is later than purchase date', async()=>{
-    let ico2 = await ICO.new(wallet,10,latestTime()+ duration.days(7),web3.toWei(10));
+    let ico2 = await ICO.new(wallet, 10, latestTime() + duration.days(7), web3.toWei(10));
     await ico2.sendTransaction({from: user, value: web3.toWei(10)}).should.be.rejectedWith('revert');
   });
 
@@ -125,17 +125,17 @@ contract('ICO', function([wallet, user, nonaddToWhiteListUser, otherUser, newOwn
     await ico.addToWhiteList([user],web3.toWei(1));
     await increaseTime(duration.days(1) + duration.seconds(10));
     await ico.sendTransaction({from: user, value: web3.toWei(1)});
-    await ico.closeSale(newOwner);
-    await token.activate({from:newOwner});
+    await ico.closeSale();
+    await token.activate();
     await token.transfer(otherUser, web3.toWei(10), {from: user}).should.be.fulfilled;
   });
 
-  it('should transfer the left balance to the new owner after saleClosed', async () => {
+  it('should transfer the remaining balance to the new owner after saleClosed', async () => {
     await ico.addToWhiteList([user],web3.toWei(1));
     await increaseTime(duration.days(1) + duration.seconds(10));
     await ico.sendTransaction({from: user, value: web3.toWei(1)});
-    await ico.closeSale(newOwner);
-    let result = await token.balanceOf(newOwner);
+    await ico.closeSale();
+    let result = await token.balanceOf(web3.eth.coinbase);
     assert.equal(result.toNumber(), new BigNumber(web3.toWei(1000000000)).sub(web3.toWei(10)).toNumber());
   });
 
@@ -148,7 +148,7 @@ contract('ICO', function([wallet, user, nonaddToWhiteListUser, otherUser, newOwn
   });
 
   it('should have reach total token supply after sale close' ,async () => {
-    await ico.closeSale(newOwner);
+    await ico.closeSale();
     let result = await token.totalSupply();
     assert.equal(result.toNumber(), web3.toWei(1000000000));
   });

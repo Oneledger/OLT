@@ -21,9 +21,9 @@ require('chai')
     });
 
     it('should not allow to buy new token when ICO contract is closed', async () => {
-      await ico.closeSale(newOwner);
+      await ico.closeSale();
       await ico.sendTransaction({from: user, value: 4.8 * (10 ** 18)}).should.be.rejectedWith('revert');
-      let balanceOf = await token.balanceOf(newOwner);
+      let balanceOf = await token.balanceOf(web3.eth.coinbase);
       assert.equal(balanceOf.toNumber(), 1000000000 * (10 ** 18))
     });
 

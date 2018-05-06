@@ -7,7 +7,7 @@ require('chai')
   .use(require('chai-as-promised'))
   .use(require('chai-bignumber')(BigNumber))
   .should();
-  contract('Vesting contract -- quarterly release', function([owner, newOwner, wallet, advisor1, advisor2, company]) {
+  contract('Vesting contract -- quarterly release', function([owner, wallet, advisor1, advisor2, company]) {
 
     let token;
     let ico;
@@ -26,8 +26,8 @@ require('chai')
       let frequency = duration.weeks(13);
       vesting = await OneledgerTokenVesting.new(advisor1, starting,frequency, totalToken/cycle);
       await ico.mintToken(vesting.address, totalToken);
-      await ico.closeSale(newOwner);
-      await token.activate({from:newOwner});
+      await ico.closeSale();
+      await token.activate();
     });
 
     it('should release the token in a year quaterly', async () => {

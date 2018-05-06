@@ -89,13 +89,12 @@ contract ICO is Ownable {
 
     /**
      * @dev close the ICO
-      param newOwner new owner of the token contract
      */
-    function closeSale(address newOwner) public onlyOwner {
+    function closeSale() public onlyOwner {
         saleClosed = true;
-        token.mint(newOwner, totalTokenSupply.sub(token.totalSupply()));
+        token.mint(owner, totalTokenSupply.sub(token.totalSupply()));
         token.finishMinting();
-        token.transferOwnership(newOwner);
+        token.transferOwnership(owner);
     }
 
     function validatePurchase(uint256 weiPaid) internal {

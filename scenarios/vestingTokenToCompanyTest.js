@@ -26,8 +26,8 @@ require('chai')
       let frequency = duration.weeks(4);
       vesting = await OneledgerTokenVesting.new(company, starting, frequency, totalToken / cycle);
       await ico.mintToken(vesting.address, totalToken);
-      await ico.closeSale(newOwner);
-      await token.activate({from:newOwner});
+      await ico.closeSale();
+      await token.activate();
     });
 
     //Release starting from the first 6 months
