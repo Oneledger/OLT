@@ -139,7 +139,7 @@ contract('ICO', function([wallet, user, nonaddToWhiteListUser, otherUser, benefi
     assert.equal(result.toNumber(), new BigNumber(web3.toWei(1000000000)).sub(web3.toWei(10)).toNumber());
   });
 
-  it('should have total token supply equal to weiCap * rate before sale close' ,async () => {
+  it('should have total token supply equal to weiRaised * rate before sale close' ,async () => {
     await ico.addToWhiteList([user], web3.toWei(3));
     await increaseTime(duration.days(1) + duration.seconds(10));
     await ico.sendTransaction({from: user, value: web3.toWei(3)});
@@ -153,12 +153,15 @@ contract('ICO', function([wallet, user, nonaddToWhiteListUser, otherUser, benefi
     assert.equal(result.toNumber(), web3.toWei(1000000000));
   });
 
-  it('should reject if all weiRased is exceed the weiCap', async () => {
+  it('should reject if all weiRaised exceeds the weiCap', async () => {
     let ico2 = await ICO.new(wallet, 10, latestTime(), web3.toWei(10));
     await increaseTime(duration.days(4) + duration.seconds(10));
-    await ico2.addToWhiteList([user],web3.toWei(8));
-    await ico2.addToWhiteList([otherUser],web3.toWei(8));
+    await ico2.addToWhiteList([user], web3.toWei(8));
+    await ico2.addToWhiteList([otherUser], web3.toWei(8));
     await ico2.sendTransaction({from: otherUser, value: web3.toWei(8)}).should.be.fulfilled;
     await ico2.sendTransaction({from: user, value: web3.toWei(8)}).should.be.rejectedWith('revert');
+    await ico2.sendTransaction({from: user, value: web3.toWei(3)}).should.be.rejectedWith('revert');
+    await ico2.sendTransaction({from: user, value: web3.toWei(2)}).should.be.fulfilled;
+    await ico2.sendTransaction({from: user, value: web3.toWei(0.1)}).should.be.rejectedWith('revert');
   })
 })
