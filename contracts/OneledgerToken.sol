@@ -19,7 +19,7 @@ contract OneledgerToken is MintableToken {
     /**
      * @dev restrict function to be callable when token is active
      */
-    modifier isActived() {
+    modifier activated() {
         require(active == true);
         _;
     }
@@ -40,16 +40,16 @@ contract OneledgerToken is MintableToken {
     }
 
     /**
-     * @dev transfer    ERC20 standard transfer wrapped with isActived
+     * @dev transfer    ERC20 standard transfer wrapped with `activated` modifier
      */
-    function transfer(address to, uint256 value) public isActived    returns (bool) {
+    function transfer(address to, uint256 value) public activated returns (bool) {
         return super.transfer(to, value);
     }
 
     /**
-     * @dev transfer    ERC20 standard transferFrom wrapped with isActived
+     * @dev transfer    ERC20 standard transferFrom wrapped with `activated` modifier
      */
-    function transferFrom(address from, address to, uint256 value) public isActived returns (bool) {
+    function transferFrom(address from, address to, uint256 value) public activated returns (bool) {
         return super.transferFrom(from, to, value);
     }
 }
