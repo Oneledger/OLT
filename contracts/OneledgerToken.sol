@@ -1,4 +1,4 @@
-pragma solidity 0.4.21;
+pragma solidity 0.4.23;
 
 import "zeppelin-solidity/contracts/math/SafeMath.sol";
 import "zeppelin-solidity/contracts/token/ERC20/MintableToken.sol";
@@ -20,7 +20,7 @@ contract OneledgerToken is MintableToken {
      * @dev restrict function to be callable when token is active
      */
     modifier isActived() {
-        require(active == true); 
+        require(active == true);
         _;
     }
 
