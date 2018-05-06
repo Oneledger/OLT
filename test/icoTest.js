@@ -8,35 +8,37 @@ require('chai')
   .use(require('chai-bignumber')(BigNumber))
   .should();
 
-
-
-contract('ICO', function([wallet, user, nonaddToWhiteListUser,otherUser,newOwner, beneficiary]) {
+contract('ICO', function([wallet, user, nonaddToWhiteListUser, otherUser, newOwner, beneficiary]) {
 
   let ico;
   let token;
+  let rate = 10;
 
   beforeEach(async ()=>{
-    ico = await ICO.new(wallet,10,latestTime() + duration.days(1), web3.toWei(10000));
+    ico = await ICO.new(wallet, rate, latestTime() + duration.days(1), web3.toWei(10000));
     token = await OneledgerToken.at(await ico.token());
   });
 
   it('should be able to mint new token for vesting contract', async () => {
-    let vesting = await OneledgerTokenVesting.new(beneficiary, latestTime(),duration.weeks(4), web3.toWei(10));
+    let vesting = await OneledgerTokenVesting.new(beneficiary, latestTime(), duration.weeks(4), web3.toWei(10));
     await ico.mintToken(vesting.address, web3.toWei(120)).should.be.fulfilled;
   })
 
-  it('should not be able to buy token, since user is not in the addToWhiteList', async () => {
+  it('should not be able to buy token, since user is not in the whitelist', async () => {
     let eth_before = await web3.eth.getBalance(wallet);
     let eth_after = await web3.eth.getBalance(wallet);
     await increaseTime(duration.days(1) + duration.seconds(1));
     await ico.sendTransaction({from: user, value: web3.toWei(4)}).should.be.rejectedWith('revert');
     assert.equal(eth_after.minus(eth_before), 0);
   });
+
   it('should be able to buy token when the user was added in the addToWhiteList', async () => {
-    await ico.addToWhiteList([user],web3.toWei(1));
+    await ico.addToWhiteList([user], web3.toWei(1));
     await increaseTime(duration.days(1) + duration.seconds(1));
     let eth_before = await web3.eth.getBalance(wallet);
     await ico.sendTransaction({from: user, value: web3.toWei(1)}).should.be.fulfilled;
+    userBalance = await token.balanceOf(user);
+    userBalance.should.be.bignumber.equal(rate * web3.toWei(1));
     await ico.sendTransaction({from: user, value: web3.toWei(1)}).should.be.rejectedWith('revert');
     let eth_after = await web3.eth.getBalance(wallet);
     assert.equal(eth_after.minus(eth_before), web3.toWei(1));
@@ -47,7 +49,7 @@ contract('ICO', function([wallet, user, nonaddToWhiteListUser,otherUser,newOwner
     await increaseTime(duration.days(1) + duration.seconds(1));
     await ico.sendTransaction({from: user, value: web3.toWei(1)}).should.be.fulfilled;
     await ico.sendTransaction({from: user, value: web3.toWei(1)}).should.be.rejectedWith('revert');
-    await increaseTime(duration.days(1)+duration.seconds(1));
+    await increaseTime(duration.days(1) + duration.seconds(1));
     await ico.sendTransaction({from: user, value: web3.toWei(3)}).should.be.rejectedWith('revert');
     await ico.sendTransaction({from: user, value: web3.toWei(2)}).should.be.fulfilled;
     await ico.sendTransaction({from: user, value: web3.toWei(2)}).should.be.rejectedWith('revert');

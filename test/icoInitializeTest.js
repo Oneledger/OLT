@@ -8,13 +8,9 @@ require('chai')
   .should();
 
 contract('ICO Initialize', function([tokenOwner, wallet, user, nonaddToWhiteListUser]) {
-  let ico  = null;
-  beforeEach(async ()=>{
-
-  });
 
   it('should fail if rate is negative', async () => {
-    await ICO.new(wallet, 0,latestTime(), 100000000000000).should.be.rejectedWith('revert');
+    await ICO.new(wallet, 0, latestTime(), 100000000000000).should.be.rejectedWith('revert');
   });
 
   it('should fail if wallet address is 0', async () => {
@@ -24,4 +20,5 @@ contract('ICO Initialize', function([tokenOwner, wallet, user, nonaddToWhiteList
   it('should fail if weiCap is too huge', async () => {
     await ICO.new(wallet, 10, latestTime(), web3.toWei(100000001)).should.be.rejectedWith('revert');
   });
+
 })
