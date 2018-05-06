@@ -37,25 +37,31 @@ contract('ICO', function([wallet, user, nonaddToWhiteListUser, otherUser, newOwn
     await increaseTime(duration.days(1) + duration.seconds(1));
     let eth_before = await web3.eth.getBalance(wallet);
     await ico.sendTransaction({from: user, value: web3.toWei(1)}).should.be.fulfilled;
-    userBalance = await token.balanceOf(user);
+    let userBalance = await token.balanceOf(user);
     userBalance.should.be.bignumber.equal(rate * web3.toWei(1));
     await ico.sendTransaction({from: user, value: web3.toWei(1)}).should.be.rejectedWith('revert');
     let eth_after = await web3.eth.getBalance(wallet);
     assert.equal(eth_after.minus(eth_before), web3.toWei(1));
   });
+
   it('should be able to buy token when the user was added in the addToWhiteList, the second day buy double', async () => {
     await ico.addToWhiteList([user],web3.toWei(1));
     let eth_before = await web3.eth.getBalance(wallet);
     await increaseTime(duration.days(1) + duration.seconds(1));
     await ico.sendTransaction({from: user, value: web3.toWei(1)}).should.be.fulfilled;
+    let userBalance = await token.balanceOf(user);
+    userBalance.should.be.bignumber.equal(rate * web3.toWei(1));
     await ico.sendTransaction({from: user, value: web3.toWei(1)}).should.be.rejectedWith('revert');
     await increaseTime(duration.days(1) + duration.seconds(1));
     await ico.sendTransaction({from: user, value: web3.toWei(3)}).should.be.rejectedWith('revert');
     await ico.sendTransaction({from: user, value: web3.toWei(2)}).should.be.fulfilled;
+    userBalance = await token.balanceOf(user);
+    userBalance.should.be.bignumber.equal(rate * web3.toWei(3));
     await ico.sendTransaction({from: user, value: web3.toWei(2)}).should.be.rejectedWith('revert');
     let eth_after = await web3.eth.getBalance(wallet);
     assert.equal(eth_after.minus(eth_before), web3.toWei(3));
   });
+
   it('should be able to buy token when the user was added in the addToWhiteList, the second day buy double, the third day free for all', async () => {
     await ico.addToWhiteList([user],web3.toWei(1));
     let eth_before = await web3.eth.getBalance(wallet);
@@ -75,6 +81,7 @@ contract('ICO', function([wallet, user, nonaddToWhiteListUser, otherUser, newOwn
     let eth_after = await web3.eth.getBalance(wallet);
     assert.equal(eth_after.minus(eth_before).toNumber(), web3.toWei(0.8));
   });
+
   it('should not allow to buy new token when ICO contract is closed', async () => {
     await ico.addToWhiteList([user],web3.toWei(1));
     await ico.closeSale(newOwner);
