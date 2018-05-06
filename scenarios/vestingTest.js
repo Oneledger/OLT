@@ -47,19 +47,19 @@ require('chai')
     //Advisor token vesting release schedule, release after two month
     it('should release the token in first month', async () => {
       let totalToken = web3.toWei(1933701);
-      let vesting = await OneledgerTokenVesting.new(advisor1, latestTime()+ duration.minutes(10),duration.weeks(4), totalToken/12);
+      let vesting = await OneledgerTokenVesting.new(advisor1, latestTime() + duration.minutes(10),duration.weeks(4), totalToken / 12);
       await ico.mintToken(vesting.address, totalToken);
       await ico.closeSale();
       await token.activate();
-      await increaseTime(duration.weeks(8)+duration.minutes(20));
+      await increaseTime(duration.weeks(8) + duration.minutes(20));
       await vesting.release(token.address);
-      assert.equal((await token.balanceOf(advisor1)).toNumber(), totalToken/6);
+      assert.equal((await token.balanceOf(advisor1)).toNumber(), totalToken / 6);
     })
 
     //Advisor token vesting release schedule, release after three month
     it('should release the token in first month', async () => {
       let totalToken = web3.toWei(1933701);
-      let vesting = await OneledgerTokenVesting.new(advisor1, latestTime() + duration.minutes(10), duration.weeks(4), totalToken/12);
+      let vesting = await OneledgerTokenVesting.new(advisor1, latestTime() + duration.minutes(10), duration.weeks(4), totalToken / 12);
       await ico.mintToken(vesting.address, totalToken);
       await ico.closeSale();
       await token.activate();
