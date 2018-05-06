@@ -11,7 +11,6 @@ contract ICO is Ownable {
     using SafeMath for uint256;
 
     struct WhiteListRecord {
-        bool isInWhiteList;
         uint256 offeredWei;
         uint256 lastPurchasedTimestamp;
     }
@@ -75,7 +74,7 @@ contract ICO is Ownable {
     */
     function addToWhiteList(address[] addresses, uint256 weiPerContributor) public onlyOwner {
         for (uint32 i = 0; i < addresses.length; i++) {
-            whiteList[addresses[i]] = WhiteListRecord(true, weiPerContributor, 0);
+            whiteList[addresses[i]] = WhiteListRecord(weiPerContributor, 0);
         }
     }
 
@@ -102,7 +101,7 @@ contract ICO is Ownable {
     function validatePurchase(uint256 weiPaid) internal {
         require(!saleClosed);
         require(initialTime <= now);
-        require(whiteList[msg.sender].isInWhiteList);
+        require(whiteList[msg.sender].offeredWei > 0);
         require(weiPaid <= weiCap - weiRaised);
         // can only purchase once every 24 hours
         require(now.sub(whiteList[msg.sender].lastPurchasedTimestamp) > 24 hours);
