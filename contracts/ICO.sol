@@ -101,7 +101,7 @@ contract ICO is Ownable {
         require(!saleClosed);
         require(initialTime <= now);
         require(whiteList[msg.sender].offeredWei > 0);
-        require(weiPaid <= weiCap - weiRaised);
+        require(weiPaid <= weiCap.sub(weiRaised));
         // can only purchase once every 24 hours
         require(now.sub(whiteList[msg.sender].lastPurchasedTimestamp) > 24 hours);
         uint256 elapsedTime = now.sub(initialTime);

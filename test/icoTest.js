@@ -63,7 +63,7 @@ contract('ICO', function([wallet, user, nonaddToWhiteListUser, otherUser, benefi
   });
 
   it('should be able to buy token when the user was added in the addToWhiteList, the second day buy double, the third day free for all', async () => {
-    await ico.addToWhiteList([user], web3.toWei(1));
+    await ico.addToWhiteList([user, otherUser], web3.toWei(1));
     let eth_before = await web3.eth.getBalance(wallet);
     await increaseTime(duration.days(1) + duration.seconds(1));
     await ico.sendTransaction({from: user, value: web3.toWei(0.1)}).should.be.fulfilled;
