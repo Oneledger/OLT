@@ -2,7 +2,6 @@ const OneledgerToken = artifacts.require('OneledgerToken');
 const ICO = artifacts.require("ICO");
 const OneledgerTokenVesting = artifacts.require("OneledgerTokenVesting");
 const {increaseTime, latestTime, duration} = require('../test/timeIncrease')(web3);
-const {tokener,ether} = require('../test/tokener');
 const BigNumber = web3.BigNumber;
 require('chai')
   .use(require('chai-as-promised'))
@@ -16,9 +15,9 @@ require('chai')
 
     beforeEach(async ()=>{
 
-      let weiCap = ether(10000);
-      let ratePerWei = 9668; //convert to rate per wei
-      ico = await ICO.new(wallet,ratePerWei,latestTime(), weiCap);
+      let weiCap = web3.toWei(10000);
+      let ratePerWei = 9668; // convert to rate per wei
+      ico = await ICO.new(wallet, ratePerWei, latestTime(), weiCap);
       token = await OneledgerToken.at(await ico.token());
     });
 
@@ -28,14 +27,14 @@ require('chai')
       await ico.closeSale(newOwner);
       token.activate({from:newOwner});
       let totalToken = 1933701;
-      let vesting1 = await OneledgerTokenVesting.new(advisor1, latestTime()+ duration.minutes(10),duration.weeks(4), tokener(totalToken/12));
-      let vesting2 = await OneledgerTokenVesting.new(advisor2, latestTime()+ duration.minutes(10),duration.weeks(4), tokener(totalToken/12));
-      await token.transfer(vesting1.address, tokener(1933701),{from:newOwner}).should.be.fulfilled;
-      await token.transfer(vesting2.address, tokener(1933701),{from:newOwner}).should.be.fulfilled;
+      let vesting1 = await OneledgerTokenVesting.new(advisor1, latestTime()+ duration.minutes(10),duration.weeks(4), web3.toWei(totalToken/12));
+      let vesting2 = await OneledgerTokenVesting.new(advisor2, latestTime()+ duration.minutes(10),duration.weeks(4), web3.toWei(totalToken/12));
+      await token.transfer(vesting1.address, web3.toWei(1933701),{from:newOwner}).should.be.fulfilled;
+      await token.transfer(vesting2.address, web3.toWei(1933701),{from:newOwner}).should.be.fulfilled;
     });
     //Advisor token vesting release schedule, release after first month
     it('should release the token in first month', async () => {
-      let totalToken = tokener(1933701);
+      let totalToken = web3.toWei(1933701);
       let vesting = await OneledgerTokenVesting.new(advisor1, latestTime()+ duration.minutes(10),duration.weeks(4), totalToken/12);
       await ico.mintToken(vesting.address, totalToken);
       await ico.closeSale(newOwner);
@@ -47,7 +46,7 @@ require('chai')
 
     //Advisor token vesting release schedule, release after two month
     it('should release the token in first month', async () => {
-      let totalToken = tokener(1933701);
+      let totalToken = web3.toWei(1933701);
       let vesting = await OneledgerTokenVesting.new(advisor1, latestTime()+ duration.minutes(10),duration.weeks(4), totalToken/12);
       await ico.mintToken(vesting.address, totalToken);
       await ico.closeSale(newOwner);
@@ -59,8 +58,8 @@ require('chai')
 
     //Advisor token vesting release schedule, release after three month
     it('should release the token in first month', async () => {
-      let totalToken = tokener(1933701);
-      let vesting = await OneledgerTokenVesting.new(advisor1, latestTime()+ duration.minutes(10),duration.weeks(4), totalToken/12);
+      let totalToken = web3.toWei(1933701);
+      let vesting = await OneledgerTokenVesting.new(advisor1, latestTime() + duration.minutes(10), duration.weeks(4), totalToken/12);
       await ico.mintToken(vesting.address, totalToken);
       await ico.closeSale(newOwner);
       await token.activate({from:newOwner});
@@ -77,7 +76,7 @@ require('chai')
         - A valid Beneficiary address for testing
     */
     it('should release the token in first month', async () => {
-      let totalToken = tokener(10000000);
+      let totalToken = web3.toWei(10000000);
       let starting = latestTime() + duration.weeks(24);
       let cycle = 12;
       let frequency = duration.weeks(4);

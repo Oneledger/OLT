@@ -2,7 +2,6 @@ const OneledgerToken = artifacts.require('OneledgerToken');
 const ICO = artifacts.require("ICO");
 const OneledgerTokenVesting = artifacts.require("OneledgerTokenVesting");
 const {increaseTime, latestTime, duration} = require('../test/timeIncrease')(web3);
-const {tokener,ether} = require('../test/tokener');
 const BigNumber = web3.BigNumber;
 require('chai')
   .use(require('chai-as-promised'))
@@ -15,17 +14,17 @@ require('chai')
     let vesting;
     let totalToken;
 
-    beforeEach(async ()=>{
+    beforeEach(async () => {
 
-      let weiCap = ether(10000);
-      let ratePerWei = 9668; //convert to rate per wei
-      ico = await ICO.new(wallet,ratePerWei,latestTime(), weiCap);
+      let weiCap = web3.toWei(10000);
+      let ratePerWei = 9668; // convert to rate per wei
+      ico = await ICO.new(wallet, ratePerWei, latestTime(), weiCap);
       token = await OneledgerToken.at(await ico.token());
-      totalToken = tokener(12000000);
-      let starting = latestTime() + duration.weeks(20);//give 4 weeks space so that vesting can happen at exactly 24 weeks
+      totalToken = web3.toWei(12000000);
+      let starting = latestTime() + duration.weeks(20); // give 4 weeks space so that vesting can happen at exactly 24 weeks
       let cycle = 12;
       let frequency = duration.weeks(4);
-      vesting = await OneledgerTokenVesting.new(company, starting, frequency, totalToken/cycle);
+      vesting = await OneledgerTokenVesting.new(company, starting, frequency, totalToken / cycle);
       await ico.mintToken(vesting.address, totalToken);
       await ico.closeSale(newOwner);
       await token.activate({from:newOwner});
