@@ -24,7 +24,7 @@ contract ICO is Ownable {
     uint256 public weiCap;
     uint256 public weiRaised;
 
-    uint256 public totalTokenSupply = 1000000000 * (10 ** 18);
+    uint256 public TOTAL_TOKEN_SUPPLY = 1000000000 * (10 ** 18);
 
     event BuyTokens(uint256 weiAmount, uint256 rate, uint256 token, address beneficiary);
 
@@ -34,7 +34,7 @@ contract ICO is Ownable {
     function ICO(address _wallet, uint256 _rate, uint256 _startDate, uint256 _weiCap) public {
         require(_rate > 0);
         require(_wallet != address(0));
-        require(_weiCap.mul(_rate) <= totalTokenSupply);
+        require(_weiCap.mul(_rate) <= TOTAL_TOKEN_SUPPLY);
 
         wallet = _wallet;
         rate = _rate;
@@ -92,7 +92,7 @@ contract ICO is Ownable {
      */
     function closeSale() public onlyOwner {
         saleClosed = true;
-        token.mint(owner, totalTokenSupply.sub(token.totalSupply()));
+        token.mint(owner, TOTAL_TOKEN_SUPPLY.sub(token.totalSupply()));
         token.finishMinting();
         token.transferOwnership(owner);
     }
