@@ -90,31 +90,37 @@ contract('ICO', function([wallet, user, nonaddToWhiteListUser, otherUser, newOwn
     await ico.closeSale(newOwner);
     await ico.sendTransaction({from: user, value: web3.toWei(0.5)}).should.be.rejectedWith('revert');
   });
+
   it('should not allow purchase when trying to buy too much token for the first day', async () => {
     await ico.addToWhiteList([user],web3.toWei(1));
     await ico.sendTransaction({from: user, value: web3.toWei(2)}).should.be.rejectedWith('revert');
   });
+
   it('should not allow purchase when trying to buy too much token for the second day', async () => {
     await ico.addToWhiteList([user],web3.toWei(1));;
     await increaseTime(duration.days(1) + duration.seconds(10));
     await ico.sendTransaction({from: user, value: web3.toWei(2.1)}).should.be.rejectedWith('revert');
   });
+
   it('should reject any purchase if starting date is later than purchase date', async()=>{
     let ico2 = await ICO.new(wallet,10,latestTime()+ duration.days(7),web3.toWei(10));
     await ico2.sendTransaction({from: user, value: web3.toWei(10)}).should.be.rejectedWith('revert');
   });
+
   it('should allow purchase if starting date is ealier than purchase date', async()=>{
     let ico2 = await ICO.new(wallet,10,latestTime()+ duration.days(7),web3.toWei(1));
     await ico2.addToWhiteList([user],web3.toWei(0.5));
     await increaseTime(duration.days(7) + duration.seconds(10));
     await ico2.sendTransaction({from: user, value: web3.toWei(0.4)}).should.be.fulfilled;
   });
+
   it('should not allowed user to transfer token during ICO sales period', async () => {
     await ico.addToWhiteList([user],web3.toWei(1));
     increaseTime(duration.days(1) + duration.seconds(10));
     await ico.sendTransaction({from: user, value: web3.toWei(1)}).should.be.fulfilled;
     await token.transfer(otherUser, web3.toWei(1), {from: user}).should.be.rejectedWith('revert');
   });
+
   it('should allowed user to transfer token after ICO sales period', async () => {
     await ico.addToWhiteList([user],web3.toWei(1));
     await increaseTime(duration.days(1) + duration.seconds(10));
@@ -123,6 +129,7 @@ contract('ICO', function([wallet, user, nonaddToWhiteListUser, otherUser, newOwn
     await token.activate({from:newOwner});
     await token.transfer(otherUser, web3.toWei(10), {from: user}).should.be.fulfilled;
   });
+
   it('should transfer the left balance to the new owner after saleClosed', async () => {
     await ico.addToWhiteList([user],web3.toWei(1));
     await increaseTime(duration.days(1) + duration.seconds(10));
@@ -131,6 +138,7 @@ contract('ICO', function([wallet, user, nonaddToWhiteListUser, otherUser, newOwn
     let result = await token.balanceOf(newOwner);
     assert.equal(result.toNumber(), new BigNumber(web3.toWei(1000000000)).sub(web3.toWei(10)).toNumber());
   });
+
   it('should have total token supply equal to weiCap * rate before sale close' ,async () => {
     await ico.addToWhiteList([user],web3.toWei(3));
     await increaseTime(duration.days(1) + duration.seconds(10));
@@ -138,11 +146,13 @@ contract('ICO', function([wallet, user, nonaddToWhiteListUser, otherUser, newOwn
     let result = await token.totalSupply();
     assert.equal(result.toNumber(), web3.toWei(30));
   });
+
   it('should have reach total token supply after sale close' ,async () => {
     await ico.closeSale(newOwner);
     let result = await token.totalSupply();
     assert.equal(result.toNumber(), web3.toWei(1000000000));
   });
+
   it('should reject if all weiRased is exceed the weiCap', async () => {
     let ico2 = await ICO.new(wallet,10,latestTime(), web3.toWei(10));
     await increaseTime(duration.days(4) + duration.seconds(10));
