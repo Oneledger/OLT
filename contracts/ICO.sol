@@ -18,9 +18,9 @@ contract ICO is Ownable {
     OneledgerToken public token;
     address public wallet; // Address where funds are collected
     uint256 public rate;   // How many token units a buyer gets per eth
-    mapping(address => WhiteListRecord) private whiteList;
-    uint256 private initialTime;
-    bool private saleClosed;
+    mapping (address => WhiteListRecord) public whiteList;
+    uint256 public initialTime;
+    bool public saleClosed;
     uint256 public weiCap;
     uint256 public weiRaised;
 
