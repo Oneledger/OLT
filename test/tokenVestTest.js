@@ -25,21 +25,24 @@ contract('OneledgerToken Vesting', function([owner,vestingOwner, beneficiary]){
   it('should not release token before the starting date',async ()=>{
     await vesting.release(token.address).should.be.rejectedWith('revert');
   });
+
   it('should only release once after the starting date and before the next release date', async () => {
     await increaseTime(duration.weeks(2) + duration.weeks(4) + duration.days(2));
     await vesting.release(token.address).should.be.fulfilled;
     await vesting.release(token.address).should.be.rejectedWith('revert');
     assert.equal( await token.balanceOf(beneficiary), 10000);
   });
+
   it('should only release twice after the starting date and before the next release date', async () => {
     await increaseTime(duration.weeks(2) + duration.weeks(4) * 2 + duration.days(2));
     await vesting.release(token.address).should.be.fulfilled;
     await vesting.release(token.address).should.be.rejectedWith('revert');
     assert.equal( await token.balanceOf(beneficiary), 20000);
   });
+
   it('should release the available balance if available balance is smaller than token ready to release', async () => {
     await increaseTime(duration.weeks(2) + duration.weeks(4) * 5 + duration.days(2));
     await vesting.release(token.address).should.be.fulfilled;
-    assert.equal( await token.balanceOf(beneficiary), 10000 * 4 + 2000);
+    assert.equal(await token.balanceOf(beneficiary), 10000 * 4 + 2000);
   })
 })

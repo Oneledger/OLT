@@ -7,6 +7,7 @@
     "compile": "truffle compile",
     "ganache": "ganache-cli -p 8546 -e 100000000000000000000 > /dev/null 2>&1 & echo $!",
     "test": "truffle test --network development",
+    "test-scenarios": "truffle test --network development scenarios/*",
     "test-ganache": "bash scripts/ganache_test.sh"
   },
   "repository": {
@@ -25,7 +26,7 @@
     "chai-as-promised": "^7.1.1",
     "chai-bignumber": "^2.0.2",
     "ganache-cli": "6.1.0",
-    "truffle": "4.1.5",
+    "truffle": "4.1.8",
     "zeppelin-solidity": "1.8.0"
   },
   "devDependencies": {

@@ -1,4 +1,4 @@
-pragma solidity 0.4.21;
+pragma solidity 0.4.23;
 
 import "zeppelin-solidity/contracts/math/SafeMath.sol";
 import "zeppelin-solidity/contracts/token/ERC20/MintableToken.sol";
@@ -14,22 +14,13 @@ contract OneledgerToken is MintableToken {
     string public name = "Oneledger Token";
     string public symbol = "OLT";
     uint256 public decimals = 18;
-    bool public active;
-
+    bool public active = false;
     /**
      * @dev restrict function to be callable when token is active
      */
-    modifier isActived() {
-        require(active == true); 
+    modifier activated() {
+        require(active == true);
         _;
-    }
-
-    /**
-     * @dev constructor
-     * param initial_supply not include decimals
-     */
-    function OneledgerToken() public {
-        active = false;
     }
 
     /**
@@ -40,16 +31,16 @@ contract OneledgerToken is MintableToken {
     }
 
     /**
-     * @dev transfer    ERC20 standard transfer wrapped with isActived
+     * @dev transfer    ERC20 standard transfer wrapped with `activated` modifier
      */
-    function transfer(address to, uint256 value) public isActived    returns (bool) {
+    function transfer(address to, uint256 value) public activated returns (bool) {
         return super.transfer(to, value);
     }
 
     /**
-     * @dev transfer    ERC20 standard transferFrom wrapped with isActived
+     * @dev transfer    ERC20 standard transferFrom wrapped with `activated` modifier
      */
-    function transferFrom(address from, address to, uint256 value) public isActived returns (bool) {
+    function transferFrom(address from, address to, uint256 value) public activated returns (bool) {
         return super.transferFrom(from, to, value);
     }
 }
