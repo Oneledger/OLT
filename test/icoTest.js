@@ -20,7 +20,7 @@ contract('ICO', function([wallet, user, nonaddToWhiteListUser, otherUser, benefi
   });
 
   it('should be able to mint new token for vesting contract', async () => {
-    let vesting = await OneledgerTokenVesting.new(beneficiary, latestTime(), duration.weeks(4), web3.toWei(10));
+    let vesting = await OneledgerTokenVesting.new(beneficiary, latestTime() + duration.minutes(10), duration.weeks(4), web3.toWei(10));
     await ico.mintToken(vesting.address, web3.toWei(120)).should.be.fulfilled;
   })
 
