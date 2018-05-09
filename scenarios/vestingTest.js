@@ -45,7 +45,7 @@ require('chai')
     })
 
     //Advisor token vesting release schedule, release after two month
-    it('should release the token in first month', async () => {
+    it('should release the token in first month and second months', async () => {
       let totalToken = web3.toWei(1933701);
       let vesting = await OneledgerTokenVesting.new(advisor1, latestTime() + duration.minutes(10),duration.weeks(4), totalToken / 12);
       await ico.mintToken(vesting.address, totalToken);
@@ -57,7 +57,7 @@ require('chai')
     })
 
     //Advisor token vesting release schedule, release after three month
-    it('should release the token in first month', async () => {
+    it('should release the token in first month, second and third months', async () => {
       let totalToken = web3.toWei(1933701);
       let vesting = await OneledgerTokenVesting.new(advisor1, latestTime() + duration.minutes(10), duration.weeks(4), totalToken / 12);
       await ico.mintToken(vesting.address, totalToken);
@@ -76,8 +76,8 @@ require('chai')
         - Frequency: monthly
         - A valid Beneficiary address for testing
     */
-    it('should release the token in first month', async () => {
-      let totalToken = web3.toWei(10000000);
+    it('should release the token for the compnay reserved vesting contract', async () => {
+      let totalToken = web3.toWei(12000000);
       let starting = latestTime() + duration.weeks(24);
       let cycle = 12;
       let frequency = duration.weeks(4);
