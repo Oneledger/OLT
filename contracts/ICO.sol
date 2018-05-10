@@ -31,7 +31,7 @@ contract ICO is Ownable {
     /**
     * @dev constructor
     */
-    function ICO(address _wallet, uint256 _rate, uint256 _startDate, uint256 _weiCap) public {
+    constructor(address _wallet, uint256 _rate, uint256 _startDate, uint256 _weiCap) public {
         require(_rate > 0);
         require(_wallet != address(0));
         require(_weiCap.mul(_rate) <= TOTAL_TOKEN_SUPPLY);
@@ -97,7 +97,7 @@ contract ICO is Ownable {
         token.transferOwnership(owner);
     }
 
-    function validatePurchase(uint256 weiPaid) internal {
+    function validatePurchase(uint256 weiPaid) internal view{
         require(!saleClosed);
         require(initialTime <= now);
         require(whiteList[msg.sender].offeredWei > 0);

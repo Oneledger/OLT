@@ -24,7 +24,7 @@ contract OneledgerTokenVesting {
      * @param _period The preiod to release the token
      * @param _tokensReleasedPerPeriod the token to release per period
      */
-    function OneledgerTokenVesting(
+    constructor(
         address _beneficiary,
         uint256 _startFrom,
         uint256 _period,
