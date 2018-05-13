@@ -17,6 +17,8 @@ contract OneledgerTokenVesting {
 
     uint256 public elapsedPeriods;
 
+    OneledgerToken private token;
+
     /**
      * @dev Creates a vesting contract for OneledgerToken
      * @param _beneficiary address of the beneficiary to whom vested tokens are transferred
@@ -28,7 +30,8 @@ contract OneledgerTokenVesting {
         address _beneficiary,
         uint256 _startFrom,
         uint256 _period,
-        uint256 _tokensReleasedPerPeriod
+        uint256 _tokensReleasedPerPeriod,
+        OneledgerToken _token
     ) public {
         require(_beneficiary != address(0));
         require(_startFrom >= now);
@@ -38,13 +41,23 @@ contract OneledgerTokenVesting {
         period = _period;
         tokensReleasedPerPeriod = _tokensReleasedPerPeriod;
         elapsedPeriods = 0;
+        token = _token;
     }
+
+    /**
+     *  @dev getToken this may be more convinience for user
+     *        to check if their vesting contract is binded with a right token
+     * return OneledgerToken
+     */
+     function getToken() public returns(OneledgerToken) {
+       return token;
+     }
 
     /**
      * @dev release
      * param _token Oneledgertoken that will be released to beneficiary
      */
-    function release(OneledgerToken token) public {
+    function release() public {
         require(token.balanceOf(this) >= 0 && now >= startFrom);
         uint256 elapsedTime = now.sub(startFrom);
         uint256 periodsInCurrentRelease = elapsedTime.div(period).sub(elapsedPeriods);

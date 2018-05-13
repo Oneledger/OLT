@@ -16,12 +16,12 @@ contract('Token Vest Initialize', function([tokenOwner, user]) {
   });
   it('should be failed if beneficiary address is 0', async () => {
     await OneledgerTokenVesting.new(0, latestTime() + duration.weeks(2),
-                                              duration.weeks(4), 10000)
+                                              duration.weeks(4), 10000, token.address)
                                               .should.be.rejectedWith('revert');
   });
   it('should be failed if starting date is earlier than current date', async () => {
     await OneledgerTokenVesting.new(user, latestTime() - 10,
-                                              duration.weeks(4), 10000)
+                                              duration.weeks(4), 10000, token.address)
                                               .should.be.rejectedWith('revert');
   });
 })

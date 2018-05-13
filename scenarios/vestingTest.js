@@ -27,44 +27,44 @@ require('chai')
       await ico.closeSale();
       token.activate();
       let totalToken = 1933701;
-      let vesting1 = await OneledgerTokenVesting.new(advisor1, latestTime()+ duration.minutes(10),duration.weeks(4), web3.toWei(totalToken/12));
-      let vesting2 = await OneledgerTokenVesting.new(advisor2, latestTime()+ duration.minutes(10),duration.weeks(4), web3.toWei(totalToken/12));
+      let vesting1 = await OneledgerTokenVesting.new(advisor1, latestTime()+ duration.minutes(10),duration.weeks(4), web3.toWei(totalToken/12), token.address);
+      let vesting2 = await OneledgerTokenVesting.new(advisor2, latestTime()+ duration.minutes(10),duration.weeks(4), web3.toWei(totalToken/12), token.address);
       await token.transfer(vesting1.address, web3.toWei(1933701)).should.be.fulfilled;
       await token.transfer(vesting2.address, web3.toWei(1933701)).should.be.fulfilled;
     });
     //Advisor token vesting release schedule, release after first month
     it('should release the token in first month', async () => {
       let totalToken = web3.toWei(1933701);
-      let vesting = await OneledgerTokenVesting.new(advisor1, latestTime()+ duration.minutes(10),duration.weeks(4), totalToken/12);
+      let vesting = await OneledgerTokenVesting.new(advisor1, latestTime()+ duration.minutes(10),duration.weeks(4), totalToken/12, token.address);
       await ico.mintToken(vesting.address, totalToken);
       await ico.closeSale();
       await token.activate();
       await increaseTime(duration.weeks(4)+duration.minutes(20));
-      await vesting.release(token.address);
+      await vesting.release();
       assert.equal((await token.balanceOf(advisor1)).toNumber(), totalToken/12);
     })
 
     //Advisor token vesting release schedule, release after two month
     it('should release the token in first month and second months', async () => {
       let totalToken = web3.toWei(1933701);
-      let vesting = await OneledgerTokenVesting.new(advisor1, latestTime() + duration.minutes(10),duration.weeks(4), totalToken / 12);
+      let vesting = await OneledgerTokenVesting.new(advisor1, latestTime() + duration.minutes(10),duration.weeks(4), totalToken / 12, token.address);
       await ico.mintToken(vesting.address, totalToken);
       await ico.closeSale();
       await token.activate();
       await increaseTime(duration.weeks(8) + duration.minutes(20));
-      await vesting.release(token.address);
+      await vesting.release();
       assert.equal((await token.balanceOf(advisor1)).toNumber(), totalToken / 6);
     })
 
     //Advisor token vesting release schedule, release after three month
     it('should release the token in first month, second and third months', async () => {
       let totalToken = web3.toWei(1933701);
-      let vesting = await OneledgerTokenVesting.new(advisor1, latestTime() + duration.minutes(10), duration.weeks(4), totalToken / 12);
+      let vesting = await OneledgerTokenVesting.new(advisor1, latestTime() + duration.minutes(10), duration.weeks(4), totalToken / 12, token.address);
       await ico.mintToken(vesting.address, totalToken);
       await ico.closeSale();
       await token.activate();
       await increaseTime(duration.weeks(12) + duration.minutes(20));
-      await vesting.release(token.address);
+      await vesting.release();
       assert.equal((await token.balanceOf(advisor1)).toNumber(), totalToken/4);
     })
 
@@ -81,7 +81,7 @@ require('chai')
       let starting = latestTime() + duration.weeks(24);
       let cycle = 12;
       let frequency = duration.weeks(4);
-      let vesting = await OneledgerTokenVesting.new(company, starting, frequency, totalToken / cycle);
+      let vesting = await OneledgerTokenVesting.new(company, starting, frequency, totalToken / cycle, token.address);
       await ico.mintToken(vesting.address, totalToken).should.be.fulfilled;
     })
   })
