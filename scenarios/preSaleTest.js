@@ -30,6 +30,6 @@ require('chai')
     it('should be able to allow deploy the vesting contract', async () => {
       let totalToken = web3.toWei(1933701);
       await OneledgerTokenVesting.new(advisor, latestTime() + duration.minutes(10),
-                                      duration.weeks(4), totalToken / 12).should.be.fulfilled;
+                                      duration.weeks(4), totalToken / 12, token.address).should.be.fulfilled;
     })
   })
