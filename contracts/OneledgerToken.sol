@@ -13,7 +13,7 @@ contract OneledgerToken is MintableToken {
 
     string public name = "Oneledger Token";
     string public symbol = "OLT";
-    uint256 public decimals = 18;
+    uint8 public decimals = 18;
     bool public active = false;
     /**
      * @dev restrict function to be callable when token is active
