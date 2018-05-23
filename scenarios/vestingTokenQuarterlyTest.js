@@ -24,7 +24,7 @@ require('chai')
       let starting = latestTime() + duration.minutes(10);
       let cycle = 4;
       let frequency = duration.weeks(13);
-      vesting = await OneledgerTokenVesting.new(advisor1, starting, frequency, totalToken / cycle);
+      vesting = await OneledgerTokenVesting.new(advisor1, starting, frequency, totalToken / cycle, token.address);
       await ico.mintToken(vesting.address, totalToken);
       await ico.closeSale();
       await token.activate();
@@ -32,16 +32,16 @@ require('chai')
 
     it('should release the token in a year quaterly', async () => {
       await increaseTime(duration.weeks(13) + duration.minutes(10));
-      await vesting.release(token.address).should.be.fulfilled;
+      await vesting.release().should.be.fulfilled;
       assert.equal((await token.balanceOf(advisor1)).toNumber(), totalToken / 4);
       await increaseTime(duration.weeks(13) + duration.minutes(10));
-      await vesting.release(token.address).should.be.fulfilled;
+      await vesting.release().should.be.fulfilled;
       assert.equal((await token.balanceOf(advisor1)).toNumber(), totalToken / 2);
       await increaseTime(duration.weeks(13) + duration.minutes(10));
-      await vesting.release(token.address).should.be.fulfilled;
+      await vesting.release().should.be.fulfilled;
       assert.equal((await token.balanceOf(advisor1)).toNumber(), web3.toBigNumber(totalToken).times(3).dividedBy(4).toNumber());
       await increaseTime(duration.weeks(13) + duration.minutes(10));
-      await vesting.release(token.address).should.be.fulfilled;
+      await vesting.release().should.be.fulfilled;
       assert.equal((await token.balanceOf(advisor1)).toNumber(), totalToken);
     })
   })
