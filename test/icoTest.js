@@ -141,5 +141,19 @@ contract('ICO', function([wallet, user, nonaddToWhiteListUser, otherUser, benefi
     assert.equal(result.toNumber(), web3.toWei(1000000000));
   });
 
+  it('should be able to update the rate ', async () => {
+    await ico.updateRate(20);
+    let newRate = await ico.rate()
+    assert.equal(newRate.toNumber(), 20);
+  })
+
+  it('should not allow the non-owner to update the rate', async()=>{
+    await ico.updateRate(20,{from: otherUser}).should.be.rejectedWith('revert');
+  })
+
+  it('should not allow to update the rate when ICO started', async()=>{
+    await increaseTime(duration.days(1) + duration.minutes(1));
+    await ico.updateRate(20).should.be.rejectedWith('revert');
+  })
 
 })
