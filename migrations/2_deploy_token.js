@@ -1,5 +1,5 @@
 const ICO = artifacts.require("ICO");
-const Oneledger =  artifacts.require("Oneledger");
+const OneledgerToken =  artifacts.require("OneledgerToken");
 
 
 module.exports = async (deployer, network, accounts) => {
