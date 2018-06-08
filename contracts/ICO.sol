@@ -1,10 +1,10 @@
-pragma solidity 0.4.23;
+pragma solidity 0.4.24;
 
 import "./OneledgerToken.sol";
 import "./OneledgerTokenVesting.sol";
-import "zeppelin-solidity/contracts/math/SafeMath.sol";
-import "zeppelin-solidity/contracts/ownership/Ownable.sol";
-import "zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
+import "openzeppelin-solidity/contracts/math/SafeMath.sol";
+import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
+import "openzeppelin-solidity/contracts/token/ERC20/ERC20.sol";
 
 
 contract ICO is Ownable {
