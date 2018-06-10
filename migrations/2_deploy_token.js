@@ -10,7 +10,7 @@ module.exports = async (deployer, network, accounts) => {
   // deployment steps
   let weiCap = 10000000000000000000000;
   let ratePerWei = 9668; // convert to rate per wei
-  let ico = await ICO.new(web3.eth.coinbase, ratePerWei,latestTime(), weiCap);
+  let ico = await ICO.new('0xd912eD6780306f6Dc09EF60f7279bF2C0E3078b1', ratePerWei,latestTime(), weiCap);
   let token = OneledgerToken.at(await ico.token());
   console.log(`ICO deployed at ${ico.address}`);
   console.log(`Token deployed at ${token.address}`);

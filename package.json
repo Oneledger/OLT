@@ -22,12 +22,18 @@
   "homepage": "https://github.com/oneledger/OLT#readme",
   "dependencies": {
     "@digix/tempo": "git+https://github.com/DigixGlobal/tempo.git",
+    "ajv": "^6.5.0",
     "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",
     "chai-bignumber": "^2.0.2",
     "ganache-cli": "6.1.0",
+    "ledger-wallet-provider": "^2.0.1-beta.2",
     "openzeppelin-solidity": "^1.10.0",
-    "truffle": "^4.1.11"
+    "truffle": "^4.1.11",
+    "truffle-ledger-provider": "0.0.3",
+    "web3": "^1.0.0-beta.34",
+    "web3-provider-engine": "^14.0.6",
+    "webpack": "^4.11.1"
   },
   "devDependencies": {
     "solidity-coverage": "^0.5.4"
