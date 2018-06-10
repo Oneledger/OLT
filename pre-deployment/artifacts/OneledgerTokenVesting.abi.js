@@ -197,4 +197,4 @@ exports.abi = [
 		"name": "OwnershipTransferred",
 		"type": "event"
 	}
-]
+];
