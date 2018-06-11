@@ -17,14 +17,14 @@ const duration = {
   years: function (val) { return val * this.days(365); },
 };
 
-const [beneficiary, xDaysFromNow, periodInDay, tokenPerPeriod, oneledgerTokenAddress] = process.argv.slice(2);
+const [beneficiary, xDaysFromNow, periodInMinute, tokenPerPeriod, oneledgerTokenAddress] = process.argv.slice(2);
 
 
 const contract = web3.eth.contract(abi);
 const output = contract.new.getData(
    beneficiary,
-   latestTime() + duration.days(xDaysFromNow),
-   duration.days(periodInDay),
+   latestTime() + duration.minutes(10) + duration.days(xDaysFromNow),
+   duration.minutes(periodInMinute),
    tokenPerPeriod,
    oneledgerTokenAddress,
    {
@@ -33,7 +33,7 @@ const output = contract.new.getData(
 let constructor = contract.new.getData(
   beneficiary,
   latestTime() + duration.days(xDaysFromNow),
-  duration.days(periodInDay),
+  duration.days(periodInMinute),
   tokenPerPeriod,
   oneledgerTokenAddress);
 
