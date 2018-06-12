@@ -159,5 +159,23 @@ contract('ICO', function([wallet, user, nonaddToWhiteListUser, otherUser, benefi
     await increaseTime(duration.days(1) + duration.minutes(1));
     await ico.updateRate(20).should.be.rejectedWith('revert');
   })
+  it('should be able to update the weiCap ', async () => {
+    await ico.updateWeiCap(web3.toWei(10000));
+    let newWeiCap = await ico.weiCap()
+    assert.equal(newWeiCap.toNumber(), web3.toWei(10000));
+  })
+
+  it('should not allow the non-owner to update the rate', async()=>{
+    await ico.updateRate(web3.toWei(10000),{from: otherUser}).should.be.rejectedWith('revert');
+  })
+
+  it('should not allow to update the rate when ICO started', async()=>{
+    await increaseTime(duration.days(1) + duration.minutes(1));
+    await ico.updateRate(web3.toWei(10000)).should.be.rejectedWith('revert');
+  })
+  it('should be able to close sale even totalSupply exceeds TOTAL_TOKEN_SUPPLY', async()=>{
+    await ico.mintToken(otherUser, web3.toWei(5000000000));
+    await ico.closeSale().should.be.fulfilled;
+  })
 
 })
