@@ -1,10 +1,10 @@
-pragma solidity 0.4.23;
+pragma solidity 0.4.24;
 
 import "./OneledgerToken.sol";
 import "./OneledgerTokenVesting.sol";
-import "zeppelin-solidity/contracts/math/SafeMath.sol";
-import "zeppelin-solidity/contracts/ownership/Ownable.sol";
-import "zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
+import "openzeppelin-solidity/contracts/math/SafeMath.sol";
+import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
+import "openzeppelin-solidity/contracts/token/ERC20/ERC20.sol";
 
 
 contract ICO is Ownable {
@@ -28,7 +28,7 @@ contract ICO is Ownable {
 
     event BuyTokens(uint256 weiAmount, uint256 rate, uint256 token, address beneficiary);
     event UpdateRate(uint256 rate);
-
+    event UpdateWeiCap(uint256 weiCap);
     /**
     * @dev constructor
     */
@@ -61,6 +61,15 @@ contract ICO is Ownable {
       require(now <= initialTime);
       rate = rate_;
       emit UpdateRate(rate);
+    }
+
+    /**
+     * @dev update the weiCap
+     */
+    function updateWeiCap(uint256 weiCap_) public onlyOwner {
+      require(now <= initialTime);
+      weiCap = weiCap_;
+      emit UpdateWeiCap(weiCap_);
     }
 
     /**
@@ -102,7 +111,9 @@ contract ICO is Ownable {
      */
     function closeSale() public onlyOwner {
         saleClosed = true;
-        token.mint(owner, TOTAL_TOKEN_SUPPLY.sub(token.totalSupply()));
+        if (TOTAL_TOKEN_SUPPLY > token.totalSupply()) {
+          token.mint(owner, TOTAL_TOKEN_SUPPLY.sub(token.totalSupply()));
+        }
         token.finishMinting();
         token.transferOwnership(owner);
     }
