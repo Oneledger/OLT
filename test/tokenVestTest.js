@@ -7,7 +7,7 @@ require('chai')
   .use(require('chai-bignumber')(BigNumber))
   .should();
 
-contract('OneledgerToken Vesting', function([owner,vestingOwner, beneficiary]){
+contract('OneledgerToken Vesting', function([owner,vestingOwner, beneficiary,otherUser]){
   let token = null;
   let vesting = null;
   const expectedTotalSupply = 100000000 * (10 ** 18);
@@ -51,5 +51,20 @@ contract('OneledgerToken Vesting', function([owner,vestingOwner, beneficiary]){
     await increaseTime(duration.weeks(2) + duration.weeks(4) * 5 + duration.days(2));
     await vesting.release({from: beneficiary}).should.be.fulfilled;
     assert.equal(await token.balanceOf(beneficiary), 10000 * 4 + 2000);
+  })
+  it('should not allow other user to close the vesting contract', async () => {
+    await vesting.close({from: beneficiary}).should.be.rejectedWith('revert');
+    await vesting.close({from: otherUser}).should.be.rejectedWith('revert');
+  })
+  it('should allow contract owner to close the contract', async () => {
+    await vesting.close({from: vestingOwner}).should.be.fulfilled;
+    assert.equal(await token.balanceOf(vestingOwner), 10000 * 4 + 2000);
+  })
+  it('should allow contract owner to close the contract and get transferred the rest of the token', async () => {
+    await increaseTime(duration.weeks(2) + duration.weeks(4) * 2 + duration.days(2));
+    await vesting.release({from: beneficiary}).should.be.fulfilled;
+    assert.equal( await token.balanceOf(beneficiary), 20000);
+    await vesting.close({from: vestingOwner}).should.be.fulfilled;
+    assert.equal(await token.balanceOf(vestingOwner), 10000 * 4 + 2000 - 20000);
   })
 })

@@ -9,6 +9,8 @@ contract OneledgerTokenVesting is Ownable{
 
     event Released(uint256 amount);
 
+    event Close(address owner, uint256 amount);
+
     // beneficiary of tokens after they are released
     address public beneficiary;
 
@@ -69,5 +71,14 @@ contract OneledgerTokenVesting is Ownable{
         elapsedPeriods = elapsedPeriods.add(periodsInCurrentRelease);
         token.transfer(beneficiary, amountToTransfer);
         emit Released(amountToTransfer);
+    }
+
+    /*
+    * @dev close
+    */
+    function close() public onlyOwner {
+      uint256 tokenLeft = token.balanceOf(this);
+      token.transfer(owner, tokenLeft);
+      emit Close(owner, tokenLeft);
     }
 }
