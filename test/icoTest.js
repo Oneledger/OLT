@@ -24,6 +24,7 @@ contract('ICO', function([wallet, user, nonaddToWhiteListUser, otherUser, benefi
                                                   latestTime() + duration.minutes(10),
                                                   duration.weeks(4),
                                                   web3.toWei(10),
+                                                  wallet,
                                                   token.address);
     await ico.mintToken(vesting.address, web3.toWei(120)).should.be.fulfilled;
   })

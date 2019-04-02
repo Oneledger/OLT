@@ -7,7 +7,7 @@ require('chai')
   .use(require('chai-bignumber')(BigNumber))
   .should();
 
-contract('OneledgerToken Vesting', function([owner,vestingOwner, beneficiary,otherUser]){
+contract('OneledgerToken Vesting', function([owner,vestingOwner, beneficiary,otherUser, reservedAccount, reservedAccount2]){
   let token = null;
   let vesting = null;
   const expectedTotalSupply = 100000000 * (10 ** 18);
@@ -16,7 +16,7 @@ contract('OneledgerToken Vesting', function([owner,vestingOwner, beneficiary,oth
     await token.mint(owner, 100000000 * (10 ** 18));
 
     vesting = await OneledgerTokenVesting.new(beneficiary, latestTime() + duration.weeks(2),
-                                              duration.weeks(4), 10000, token.address, {from: vestingOwner});
+                                              duration.weeks(4), 10000, reservedAccount2, token.address, {from: vestingOwner});
 
     await token.activate();
     await token.transfer(vesting.address, 10000 * 4 + 2000);
@@ -58,13 +58,21 @@ contract('OneledgerToken Vesting', function([owner,vestingOwner, beneficiary,oth
   })
   it('should allow contract owner to close the contract', async () => {
     await vesting.close({from: vestingOwner}).should.be.fulfilled;
-    assert.equal(await token.balanceOf(vestingOwner), 10000 * 4 + 2000);
+    assert.equal(await token.balanceOf(reservedAccount2), 10000 * 4 + 2000);
   })
   it('should allow contract owner to close the contract and get transferred the rest of the token', async () => {
     await increaseTime(duration.weeks(2) + duration.weeks(4) * 2 + duration.days(2));
     await vesting.release({from: beneficiary}).should.be.fulfilled;
     assert.equal( await token.balanceOf(beneficiary), 20000);
     await vesting.close({from: vestingOwner}).should.be.fulfilled;
-    assert.equal(await token.balanceOf(vestingOwner), 10000 * 4 + 2000 - 20000);
+    assert.equal(await token.balanceOf(reservedAccount2), 10000 * 4 + 2000 - 20000);
+  })
+  it('should transfer the balance to reservedAccount', async() => {
+    await increaseTime(duration.weeks(2) + duration.weeks(4) * 2 + duration.days(2));
+    await vesting.release({from: beneficiary}).should.be.fulfilled;
+    await vesting.assignReservedAccount(reservedAccount,{from: vestingOwner}).should.be.fulfilled;
+    assert.equal( await token.balanceOf(beneficiary), 20000);
+    await vesting.close({from: vestingOwner}).should.be.fulfilled;
+    assert.equal(await token.balanceOf(reservedAccount), 10000 * 4 + 2000 - 20000);
   })
 })

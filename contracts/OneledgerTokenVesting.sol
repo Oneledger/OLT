@@ -14,6 +14,9 @@ contract OneledgerTokenVesting is Ownable{
     // beneficiary of tokens after they are released
     address public beneficiary;
 
+    // address that get automatically balance transferred when close the contract
+    address public reservedAccount;
+
     uint256 public startFrom;
     uint256 public period;
     uint256 public tokensReleasedPerPeriod;
@@ -34,9 +37,11 @@ contract OneledgerTokenVesting is Ownable{
         uint256 _startFrom,
         uint256 _period,
         uint256 _tokensReleasedPerPeriod,
+        address _reservedAccount,
         OneledgerToken _token
     ) public {
         require(_beneficiary != address(0));
+        require(_reservedAccount != address(0));
         require(_startFrom >= now);
 
         beneficiary = _beneficiary;
@@ -45,6 +50,7 @@ contract OneledgerTokenVesting is Ownable{
         tokensReleasedPerPeriod = _tokensReleasedPerPeriod;
         elapsedPeriods = 0;
         token = _token;
+        reservedAccount =  _reservedAccount;
     }
 
     /**
@@ -73,12 +79,20 @@ contract OneledgerTokenVesting is Ownable{
         emit Released(amountToTransfer);
     }
 
+    /**
+    * @dev assign reservedAccount
+    */
+    function assignReservedAccount(address _newReservedAccount) public onlyOwner {
+      require(_newReservedAccount != address(0));
+      reservedAccount =  _newReservedAccount;
+    }
+
     /*
     * @dev close
     */
     function close() public onlyOwner {
       uint256 tokenLeft = token.balanceOf(this);
-      token.transfer(owner, tokenLeft);
+      token.transfer(reservedAccount, tokenLeft);
       emit Close(owner, tokenLeft);
     }
 }
